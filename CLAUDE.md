@@ -26,6 +26,7 @@ Live: https://solerooo.github.io/mampf-dojo/ (GitHub Pages, Branch `main`, Root)
 - Rezeptwerte (kcal, Protein, Kosten) werden **aus der Zutatentabelle berechnet** – nie von Hand eintragen.
 - Rezept-Zutaten: `[[zutatId, menge], …]` in der Einheit der Zutat (g/ml/Stk).
 - Hauptmahlzeiten (Frühstück/Mittag/Abend) 500–800 kcal, Snacks/Shakes 300–500 kcal (Test prüft das).
+- **Küche: Herd + Heißluftfritteuse, KEIN Backofen.** Mikrowelle nur optional – immer eine Pfannen/Topf-Alternative nennen.
 - Keine Tiefkühlware (kein Gefrierfach). `haltbarRohTage` = Tage ab Einkauf (Einkaufstag = Tag 1).
 - Gekochtes max. 3 Tage, Meal-Prep max. 3 Portionen. Basis-Ketten über `basisId` + `BASEN`.
 - Schärfe > 1 braucht `mildVersion` (Standard: max. Schärfe 1). `magenschonend` nur ohne Reizfaktoren.

@@ -39,6 +39,11 @@ pruefe(R.every(r => r.haltbarTage <= 3 && r.mealPrepPortionen >= 1 && r.mealPrep
 const scharfOhneMild = R.filter(r => r.schaerfe > 1 && !(A.REZEPT_MILD[r.id] && A.REZEPT_MILD[r.id].schaerfe <= 1));
 pruefe(!scharfOhneMild.length, 'scharfe Gerichte haben eine Mild-Version', scharfOhneMild.map(r => r.id).join(', '));
 pruefe(R.every(r => !r.magenschonend || r.reiz.length === 0), 'magenschonend nur ohne Reizfaktoren');
+const texte = r => [r.name].concat(r.schritte, r.tipps || []).join(' ');
+const mitOfen = R.filter(r => /backofen|\bofen\b|ofenkartoffel|aufs blech|umluft|auflaufform|kastenform/i.test(texte(r)));
+pruefe(!mitOfen.length, 'kein Backofen nötig (nur Herd + Heißluftfritteuse)', mitOfen.map(r => r.id).join(', '));
+const nurMikrowelle = R.filter(r => r.schritte.concat(r.tipps || []).some(t => /mikrowelle/i.test(t) && !/oder/i.test(t)));
+pruefe(!nurMikrowelle.length, 'Mikrowelle immer mit Pfannen-/Topf-Alternative', nurMikrowelle.map(r => r.id).join(', '));
 pruefe(A.ZUTATEN.every(z => z.tiefkuehl === false && !/\bTK\b|tiefgek/i.test(z.name)), 'keine Tiefkühlware');
 pruefe(A.ZUTATEN.every(z => z.kcal >= 0 && z.protein >= 0 && z.preis > 0 && z.packung > 0 && z.haltbarRohTage > 0), 'Zutaten: Nährwerte, Preis, Packung, Haltbarkeit');
 pruefe(A.ZUTATEN.filter(z => ['haehnchen', 'hack', 'lachs', 'himbeeren', 'spinat', 'salat'].includes(z.id)).every(z => z.haltbarRohTage <= 4), 'Empfindliches (Hack, Fisch, Hähnchen, Beeren, Salat) kurz haltbar');

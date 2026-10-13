@@ -485,7 +485,7 @@ input[type=range] { width: 100%; accent-color: var(--pink); min-height: 44px; }
 /* ---------------------------------------------------------------------
    App-Version: Bei JEDER Änderung hier UND in sw.js (VERSION) erhöhen!
    --------------------------------------------------------------------- */
-const APP_VERSION = '1.0.1';
+const APP_VERSION = '1.0.2';
 
 /* Supermarkt-Abteilungen in Lauf-Reihenfolge (Einkaufsliste wird so sortiert) */
 const ABTEILUNGEN = [
@@ -588,7 +588,7 @@ const ZUTATEN = [
   // ---------- Reis, Nudeln & Müsli ----------
   ZT('reis',        'Langkorn- oder Basmatireis',      'trocken', 350, 7,    'g', 1000, 1.79, 365, VORRAT),
   ZT('rundkornreis','Milchreis / Sushi-Reis (Rundkorn)', 'trocken', 350, 6.5, 'g', 1000, 1.79, 365, Object.assign({ kurz: 'Milchreis (Rundkornreis)' }, VORRAT)),
-  ZT('expressreis', 'Express-Reis (Mikrowelle, gegart)','trocken', 155, 3.2,  'g', 250, 1.09, 180, { kurz: 'Express-Reis' }),
+  ZT('expressreis', 'Express-Reis (vorgegart, im Beutel)','trocken', 155, 3.2,  'g', 250, 1.09, 180, { kurz: 'Express-Reis' }),
   ZT('nudeln',      'Nudeln (Penne, Spaghetti, Makkaroni)', 'trocken', 355, 12.5, 'g', 500, 0.79, 365, Object.assign({ kurz: 'Nudeln' }, VORRAT)),
   ZT('haferflocken','Haferflocken (zart)',             'trocken', 372, 13.5, 'g', 500, 0.65, 365, Object.assign({ kurz: 'Haferflocken' }, VORRAT)),
   ZT('granola',     'Knuspermüsli / Granola',          'trocken', 450, 9,    'g', 500, 1.79, 120, Object.assign({ kurz: 'Granola' }, VORRAT)),
@@ -742,7 +742,7 @@ const REZEPTE_ROH = [
       'Deckel drauf und über Nacht (mind. 4 Std.) in den Kühlschrank.',
       'Morgens die Banane in Scheiben draufschnippeln. Kein Herd, kein Abwasch-Drama!',
     ],
-    tipps: ['Gleich 2–3 Gläser vorbereiten – halten 3 Tage im Kühlschrank.', 'Lieber warm? 2 Min. in die Mikrowelle.'] },
+    tipps: ['Gleich 2–3 Gläser vorbereiten – halten 3 Tage im Kühlschrank.', 'Lieber warm? Kurz im Topf erwärmen.'] },
 
   { id: 'schoko_oats', name: 'Schoko-Bananen-Overnight-Oats', emoji: '🍫', mahlzeit: 'fruehstueck', kueche: 'amerikanisch',
     zeitMin: 5, aufwand: 0, abwasch: 1, fancy: true, magenschonend: true, mealPrepPortionen: 3, haltbarTage: 3,
@@ -782,7 +782,7 @@ const REZEPTE_ROH = [
       'Zwiebel und Paprika würfeln, im Olivenöl 5 Min. weich dünsten. Gewürze kurz mitrösten.',
       'Passierte Tomaten dazu, 5 Min. köcheln, salzen.',
       'Drei Mulden drücken, Eier hineinschlagen, Deckel drauf, 6–8 Min. stocken lassen.',
-      'Feta drüberbröseln. Ciabatta aufbacken und zum Dippen nutzen.',
+      'Feta drüberbröseln. Ciabatta 4 Min. bei 180 °C in der Heißluftfritteuse aufbacken und zum Dippen nutzen.',
     ],
     mildVersion: { schaerfe: 0, text: 'Magen-mild: nur 120 g Tomaten plus 1 EL Sahne, Kreuzkümmel weglassen – cremiger und säureärmer.', tausch: { passata: 120, sahne: 15, kreuzkuemmel: 0 } },
     tipps: ['Mit Babyspinat wird daraus „Green Shakshuka“.'] },
@@ -825,7 +825,7 @@ const REZEPTE_ROH = [
     schritte: [
       'Skyr in eine Schüssel geben und glatt rühren.',
       'Banane in Scheiben schneiden und fächerartig auflegen, Granola daneben streuen.',
-      'Erdnussbutter leicht erwärmen (10 Sek. Mikrowelle) und mit Honig drüberträufeln.',
+      'Erdnussbutter glatt rühren und zusammen mit dem Honig drüberträufeln.',
     ],
     tipps: ['Mit Heidelbeeren oder Mango variieren.'] },
 
@@ -972,7 +972,7 @@ const REZEPTE_ROH = [
     zeitMin: 8, aufwand: 0, abwasch: 1, fancy: true, magenschonend: true,
     zutaten: [['expressreis', 125], ['raeucherlachs', 50], ['frischkaese', 25], ['nori', 3], ['sesam', 3]],
     schritte: [
-      'Express-Reis 1 Min. in der Mikrowelle erwärmen und leicht salzen.',
+      'Express-Reis mit 1 EL Wasser 2 Min. in der Pfanne erwärmen (oder Mikrowelle) und leicht salzen.',
       'Lachs klein schneiden und mit dem Frischkäse mischen.',
       'Hände nass machen, Reis zu flachen Fladen drücken, Füllung rein, zu Dreiecken formen.',
       'Je einen Nori-Streifen herumwickeln, mit Sesam bestreuen.',
@@ -1001,9 +1001,9 @@ const REZEPTE_ROH = [
     zeitMin: 10, aufwand: 1, abwasch: 2, magenschonend: true, mealPrepPortionen: 3, haltbarTage: 3,
     zutaten: [['banane', 1], ['haferflocken', 40], ['eier', 1], ['quark', 60], ['schokolade', 10], ['backpulver', 2]],
     schritte: [
-      'Ofen auf 180 °C Umluft vorheizen.',
+      'Heißluftfritteuse auf 160 °C vorheizen.',
       'Bananen zerdrücken, mit Haferflocken, Eiern, Quark und Backpulver verrühren. Schoki hacken und unterheben.',
-      'In eine kleine Kastenform (mit Backpapier) füllen und 30 Min. backen.',
+      'In eine kleine Silikon- oder Alu-Form füllen, die in den Korb passt, und 25–30 Min. backen (Holzstäbchen-Probe: kommt es sauber raus, ist es fertig).',
       'Abkühlen lassen, in 3 Stücke teilen – je eins pro Snack.',
     ],
     tipps: ['Hält 3 Tage in einer Dose – perfekt für Chill-Tage.'] },
@@ -1042,7 +1042,7 @@ const REZEPTE_ROH = [
     zeitMin: 30, aufwand: 1, abwasch: 2, fancy: true, basisId: 'pulled_chicken', variante: 'Bowl', aufwandReste: 0, abwaschReste: 1,
     zutaten: [['expressreis', 250], ['mais', 50], ['griechjoghurt', 40], ['fruehlingszwiebel', 10]],
     schritte: [
-      'Express-Reis in der Mikrowelle erhitzen, Pulled Chicken mit aufwärmen.',
+      'Express-Reis und Pulled Chicken zusammen in der Pfanne 3 Min. erwärmen (oder Mikrowelle).',
       'Reis in eine Bowl, Chicken und Mais nebeneinander drauf.',
       'Joghurt-Klecks und Frühlingszwiebel-Ringe drüber.',
     ] },
@@ -1051,7 +1051,7 @@ const REZEPTE_ROH = [
     zeitMin: 30, aufwand: 1, abwasch: 1, basisId: 'pulled_chicken', variante: 'Wrap', aufwandReste: 0, abwaschReste: 1,
     zutaten: [['wraps', 2], ['cheddar', 20], ['salat', 30], ['griechjoghurt', 30]],
     schritte: [
-      'Pulled Chicken kurz in der Mikrowelle erwärmen.',
+      'Pulled Chicken kurz in der Pfanne erwärmen (oder Mikrowelle).',
       'Wraps mit Joghurt bestreichen, Salat, Chicken und Cheddar drauf.',
       'Aufrollen und in einer trockenen Pfanne 1 Min. pro Seite anrösten (optional).',
     ] },
@@ -1087,17 +1087,18 @@ const REZEPTE_ROH = [
     zeitMin: 30, aufwand: 1, abwasch: 1, basisId: 'chili', variante: 'Wrap', aufwandReste: 0, abwaschReste: 1,
     zutaten: [['wraps', 1], ['cheddar', 20]],
     schritte: [
-      'Chili in der Mikrowelle heiß machen.',
+      'Chili im Topf heiß machen (oder Mikrowelle).',
       'Auf den Wrap geben, Cheddar drüber, fest einrollen.',
       'In einer Pfanne kurz anrösten, bis der Käse schmilzt.',
     ] },
 
-  { id: 'chili_kartoffel', name: 'Chili-Ofenkartoffel mit Joghurt-Dip', emoji: '🥔', mahlzeit: 'mittag', kueche: 'mexikanisch',
-    zeitMin: 30, aufwand: 1, abwasch: 2, basisId: 'chili', variante: 'Ofenkartoffel', aufwandReste: 1,
-    zutaten: [['kartoffeln', 220], ['griechjoghurt', 40]],
+  { id: 'chili_kartoffel', name: 'Chili-Kartoffel aus dem Airfryer mit Joghurt-Dip', emoji: '🥔', mahlzeit: 'mittag', kueche: 'mexikanisch',
+    zeitMin: 30, aufwand: 1, abwasch: 2, basisId: 'chili', variante: 'Airfryer-Kartoffel', aufwandReste: 1,
+    zutaten: [['kartoffeln', 220], ['oel', 3], ['griechjoghurt', 40]],
     schritte: [
-      'Kartoffeln waschen, mehrmals einstechen und 8–10 Min. in der Mikrowelle garen (oder 45 Min. im Ofen bei 200 °C).',
-      'Kreuzweise einschneiden und aufdrücken.',
+      'Kartoffeln waschen, längs halbieren, die Schnittflächen mit dem Öl einreiben und salzen.',
+      'Mit der Schnittfläche nach oben in der Heißluftfritteuse bei 200 °C ca. 25 Min. garen, bis sie weich sind.',
+      'Kartoffelhälften mit einer Gabel leicht aufdrücken.',
       'Heißes Chili drüber, Joghurt-Klecks drauf.',
     ] },
 
@@ -1124,7 +1125,7 @@ const REZEPTE_ROH = [
     zeitMin: 20, aufwand: 1, abwasch: 2, fancy: true, fettig: true,
     zutaten: [['steak', 150], ['ciabatta', 1.5], ['paprika', 60], ['zwiebel', 40], ['champignons', 60], ['reibekaese', 40], ['oel', 8]],
     schritte: [
-      'Ciabatta aufbacken. Steak sehr dünn aufschneiden (leicht angefroren geht’s leichter – ohne Gefrierfach einfach scharfes Messer nehmen).',
+      'Ciabatta 4 Min. bei 180 °C in der Heißluftfritteuse aufbacken. Steak sehr dünn aufschneiden (leicht angefroren geht’s leichter – ohne Gefrierfach einfach scharfes Messer nehmen).',
       'Zwiebel, Paprika und Pilze in Streifen schneiden und in der Hälfte des Öls 5 Min. braten, zur Seite schieben.',
       'Steakstreifen im restlichen Öl 1–2 Min. scharf anbraten, salzen, mit dem Gemüse mischen.',
       'Käse drauf, Deckel drauf, 1 Min. schmelzen lassen, ins Brötchen schaufeln.',
@@ -1144,7 +1145,7 @@ const REZEPTE_ROH = [
     zeitMin: 10, aufwand: 0, abwasch: 1, fancy: true, magenschonend: true,
     zutaten: [['expressreis', 250], ['thunfisch', 100], ['mayo', 15], ['sojasauce', 5], ['nori', 5], ['sesam', 5]],
     schritte: [
-      'Express-Reis 1–2 Min. in der Mikrowelle erwärmen, leicht salzen, etwas abkühlen lassen.',
+      'Express-Reis mit 1 EL Wasser 2 Min. in der Pfanne erwärmen (oder Mikrowelle), leicht salzen, etwas abkühlen lassen.',
       'Thunfisch abtropfen lassen, mit Mayo und Sojasauce mischen.',
       'Mit nassen Händen drei Reisfladen formen, Füllung rein, zu Dreiecken drücken.',
       'Nori-Streifen herumwickeln, mit Sesam bestreuen. Konbini zu Hause!',
@@ -1173,7 +1174,7 @@ const REZEPTE_ROH = [
     zeitMin: 10, aufwand: 0, abwasch: 1,
     zutaten: [['ciabatta', 2], ['mozzarella', 100], ['kochschinken', 60], ['cherrytomaten', 50], ['olivenoel', 5]],
     schritte: [
-      'Ciabatta-Brötchen 8 Min. aufbacken (oder halbiert in den Toaster).',
+      'Ciabatta-Brötchen 4 Min. bei 180 °C in der Heißluftfritteuse aufbacken (oder halbiert in den Toaster).',
       'Mozzarella und Tomaten in Scheiben schneiden.',
       'Brötchen mit Olivenöl beträufeln, mit Schinken, Mozzarella und Tomaten belegen, salzen, pfeffern.',
     ] },
@@ -1285,15 +1286,15 @@ const REZEPTE_ROH = [
       'Mit Parmesan bestreuen. Mamma mia!',
     ] },
 
-  { id: 'bolo_gnocchi', name: 'Bolo-Gnocchi-Auflauf mit Mozzarella', emoji: '🧀', mahlzeit: 'abend', kueche: 'italienisch',
-    zeitMin: 35, aufwand: 1, abwasch: 2, basisId: 'bolo', variante: 'Gnocchi-Auflauf', aufwandReste: 1,
+  { id: 'bolo_gnocchi', name: 'Bolo-Gnocchi mit Mozzarella überbacken (Airfryer)', emoji: '🧀', mahlzeit: 'abend', kueche: 'italienisch',
+    zeitMin: 35, aufwand: 1, abwasch: 2, basisId: 'bolo', variante: 'Gnocchi überbacken', aufwandReste: 1,
     zutaten: [['gnocchi', 180], ['mozzarella', 30]],
     schritte: [
-      'Ofen auf 220 °C (Grill) vorheizen.',
       'Gnocchi 2 Min. in kochendem Wasser garen, bis sie oben schwimmen.',
-      'Mit dem Ragù in eine kleine Auflaufform, Mozzarella zerzupfen und drauf.',
-      '8–10 Min. überbacken, bis der Käse blubbert.',
-    ] },
+      'Mit dem Ragù in eine kleine ofenfeste Form geben, die in den Korb der Heißluftfritteuse passt. Mozzarella zerzupfen und drauf.',
+      'Bei 200 °C 6–8 Min. überbacken, bis der Käse blubbert.',
+    ],
+    tipps: ['Keine passende Form? Gnocchi im Topf mit dem Ragù schwenken, Mozzarella drauf, Deckel zu – nach 2 Min. ist er geschmolzen.'] },
 
   { id: 'butter_chicken', name: 'Butter Chicken mit Basmati & Naan', emoji: '🍛', mahlzeit: 'abend', kueche: 'indisch',
     zeitMin: 30, aufwand: 1, abwasch: 2, basisId: 'butter_chicken', variante: 'Klassik', aufwandReste: 1,
@@ -1343,21 +1344,21 @@ const REZEPTE_ROH = [
       'Alles anrichten. Sanft zum Magen, edel auf dem Teller.',
     ] },
 
-  { id: 'steak_kartoffeln', name: 'Hüftsteak mit Ofenkartoffeln & Kräuterquark', emoji: '🥩', mahlzeit: 'abend', kueche: 'amerikanisch',
+  { id: 'steak_kartoffeln', name: 'Hüftsteak mit Airfryer-Wedges & Kräuterquark', emoji: '🥩', mahlzeit: 'abend', kueche: 'amerikanisch',
     zeitMin: 20, aufwand: 2, abwasch: 3, fancy: true,
     zutaten: [['steak', 150], ['kartoffeln', 300], ['olivenoel', 10], ['quark', 100], ['fruehlingszwiebel', 15], ['butter', 10]],
     schritte: [
-      'Ofen auf 220 °C vorheizen. Kartoffeln in Spalten schneiden, mit Olivenöl und Salz aufs Blech, 30 Min. backen.',
+      'Kartoffeln in Spalten schneiden, mit Olivenöl und Salz mischen und in der Heißluftfritteuse bei 200 °C 20–25 Min. knusprig garen (zwischendurch schütteln).',
       'Quark mit fein geschnittener Frühlingszwiebel, Salz und einem Schluck Wasser cremig rühren.',
       'Steak trocken tupfen, in sehr heißer Pfanne 2–3 Min. pro Seite braten, Butter dazu und das Steak damit begießen. 5 Min. ruhen lassen.',
       'Aufschneiden und mit Kartoffeln und Quark servieren. Steakhouse-Feeling!',
     ] },
 
-  { id: 'smash_burger', name: 'Smash Burger mit Cheddar & Ofenkartoffeln', emoji: '🍔', mahlzeit: 'abend', kueche: 'amerikanisch',
+  { id: 'smash_burger', name: 'Smash Burger mit Cheddar & Airfryer-Pommes', emoji: '🍔', mahlzeit: 'abend', kueche: 'amerikanisch',
     zeitMin: 25, aufwand: 2, abwasch: 3, fancy: true, fettig: true,
     zutaten: [['hack', 125], ['burgerbuns', 1], ['cheddar', 18], ['salat', 20], ['mayo', 8], ['ketchup', 10], ['kartoffeln', 150], ['oel', 5]],
     schritte: [
-      'Ofen auf 220 °C. Kartoffeln in Spalten schneiden, mit Öl und Salz 25 Min. backen.',
+      'Kartoffeln in Stäbchen schneiden, mit Öl und Salz mischen und in der Heißluftfritteuse bei 200 °C ca. 20 Min. knusprig garen (zwischendurch schütteln).',
       'Hack zu 2 Kugeln formen. Pfanne sehr heiß machen, Kugeln reinlegen und mit einem Pfannenwender richtig platt smashen.',
       '2 Min. braten, salzen, wenden, Cheddar drauf, 1 Min. weiter.',
       'Bun toasten, Mayo + Ketchup drauf, Salat, beide Patties stapeln. SMASH!',
@@ -1435,16 +1436,16 @@ const REZEPTE_ROH = [
       'Röstzwiebeln drüber. Ein Gericht wie eine Umarmung von der Oma.',
     ] },
 
-  { id: 'ofenblech', name: 'Hähnchen-Süßkartoffel-Ofenblech mit Feta', emoji: '🍠', mahlzeit: 'abend', kueche: 'mediterran',
+  { id: 'ofenblech', name: 'Airfryer-Hähnchen mit Süßkartoffel & Feta', emoji: '🍠', mahlzeit: 'abend', kueche: 'mediterran',
     zeitMin: 15, aufwand: 1, abwasch: 1, fancy: true, mealPrepPortionen: 2, haltbarTage: 3,
     zutaten: [['haehnchen', 140], ['suesskartoffel', 300], ['paprika', 100], ['zucchini', 100], ['feta', 40], ['olivenoel', 12]],
     schritte: [
-      'Ofen auf 200 °C Umluft vorheizen, Blech mit Backpapier auslegen.',
-      'Süßkartoffel, Paprika und Zucchini in Stücke schneiden, Hähnchen würfeln.',
-      'Alles mit Olivenöl, Salz und Pfeffer aufs Blech, 25–30 Min. backen.',
-      'Feta drüberbröseln. Ein Blech, ein Teller abwaschen – fertig.',
+      'Süßkartoffel, Paprika und Zucchini in mundgerechte Stücke schneiden, Hähnchen würfeln.',
+      'Alles in einer Schüssel mit Olivenöl, Salz und Pfeffer mischen.',
+      'In der Heißluftfritteuse bei 200 °C 18–22 Min. garen, nach der Hälfte schütteln. Für 2 Portionen in zwei Durchgängen.',
+      'Feta drüberbröseln. Nur Korb und Schüssel abwaschen – fertig.',
     ],
-    tipps: ['Zwei Portionen backen: die zweite hält 3 Tage.'] },
+    tipps: ['Zwei Portionen garen: die zweite hält 3 Tage im Kühlschrank.'] },
 
   { id: 'thai_curry', name: 'Thai-Erdnuss-Kokos-Curry mit Hähnchen', emoji: '🥥', mahlzeit: 'abend', kueche: 'thailändisch',
     zeitMin: 15, aufwand: 1, abwasch: 2, schaerfe: 1, mealPrepPortionen: 3, haltbarTage: 3,

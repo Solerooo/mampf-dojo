@@ -17,7 +17,7 @@ abgehakte Mahlzeit gibt’s **XP, Level und Wochen-Bosse**.
 - **Profil:** Level & Rang, Gewicht + Diagramm mit Prognose, „Was wäre, wenn …“, Erfolge, Einstellungen, Backup
 
 Magenschonend als Standard (wenig Schärfe, Säure, Fett), keine Tiefkühlware, Empfindliches wird früh in der Woche
-verplant. **Die App ersetzt keine ärztliche Beratung.**
+verplant. Alle Rezepte klappen mit Herd und Heißluftfritteuse – ein Backofen ist nicht nötig. **Die App ersetzt keine ärztliche Beratung.**
 
 ## Aufs Handy wie eine echte App
 - **iPhone (Safari):** Link öffnen → Teilen-Knopf (Quadrat mit Pfeil) → „Zum Home-Bildschirm“ → „Hinzufügen“.
