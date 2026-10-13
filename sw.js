@@ -2,7 +2,7 @@
    - index.html: network-first (neue Version sofort, offline aus dem Cache)
    - alles andere: cache-first
    - VERSION bei JEDER Änderung erhöhen (gleich wie APP_VERSION in index.html)! */
-const VERSION = '1.0.2';
+const VERSION = '1.1.0';
 const CACHE = 'mampf-dojo-' + VERSION;
 const DATEIEN = [
   './',
@@ -14,6 +14,26 @@ const DATEIEN = [
   './icons/icon-maskable-192.png',
   './icons/icon-maskable-512.png',
   './icons/apple-touch-icon.png',
+  './assets/bilder/bosse/brezn-baron.webp',
+  './assets/bilder/bosse/bubble-tea-kraken.webp',
+  './assets/bilder/bosse/burger-golem.webp',
+  './assets/bilder/bosse/curry-drache.webp',
+  './assets/bilder/bosse/gyoza-ninja.webp',
+  './assets/bilder/bosse/mac-cheese-schleim.webp',
+  './assets/bilder/bosse/onigiri-oger.webp',
+  './assets/bilder/bosse/pancake-titan.webp',
+  './assets/bilder/bosse/pizza-phantom.webp',
+  './assets/bilder/bosse/ramen-ronin.webp',
+  './assets/bilder/bosse/sushi-samurai.webp',
+  './assets/bilder/bosse/taco-bandit.webp',
+  './assets/bilder/maskottchen/besorgt.webp',
+  './assets/bilder/maskottchen/freut.webp',
+  './assets/bilder/maskottchen/kampf.webp',
+  './assets/bilder/maskottchen/levelup.webp',
+  './assets/bilder/maskottchen/muede.webp',
+  './assets/bilder/maskottchen/stolz.webp',
+  './assets/fonts/bangers.woff2',
+  './assets/fonts/dela-gothic-sfx.woff2',
 ];
 
 self.addEventListener('install', event => {

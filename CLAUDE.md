@@ -22,6 +22,17 @@ Live: https://solerooo.github.io/mampf-dojo/ (GitHub Pages, Branch `main`, Root)
   ergänzen; Strukturänderungen → Migrationsschritt `if (v < N)` anhängen und `SCHEMA_VERSION` erhöhen.
 - Keine persönlichen Daten ins Repo (alles bleibt im Browser des Nutzers).
 
+## Design-System „Shōnen-Kochshow“ (seit 1.1.0)
+- Manga-Seite: Rasterpapier-Hintergrund, weiße Panels mit 3 px Tusche-Rand + harter Schatten. Farben nur als
+  CSS-Variablen in `:root` (hell) und Dark-Mode-Block – keine Hex-Werte verstreut einsetzen.
+- Mut-Element ist das **Kampf-HUD** auf „Heute“ (Mampfi vs. Wochen-Boss). Effekte nur als Reaktion auf Aktionen
+  (Impact beim Abhaken, Boss-Treffer, Level-Up-Verwandlung), immer mit `prefers-reduced-motion`-Fallback.
+- Schriften lokal: `Bangers` (Überschriften, Zahlen, Knöpfe), `DelaSFX` nur für Katakana-Soundeffekte.
+  Neue Katakana im Code → Schrift neu subsetten (siehe design/PROMPTS.md), sonst fehlen Zeichen.
+- Bilder: `assets/bilder/maskottchen/*.webp` (6 Ausdrücke), `assets/bilder/bosse/*.webp` (12, Feld `bild` in `BOSSE`).
+  Jede Datei in `assets/` muss in `sw.js` → `DATEIEN` stehen (Test prüft das). Herkunft: design/PROMPTS.md.
+- Vorher/Nachher-Screenshots: `node tools/screenshots.js design/<ordner>` (fester Demo-Zustand, 390 px).
+
 ## Daten-Konventionen
 - Rezeptwerte (kcal, Protein, Kosten) werden **aus der Zutatentabelle berechnet** – nie von Hand eintragen.
 - Rezept-Zutaten: `[[zutatId, menge], …]` in der Einheit der Zutat (g/ml/Stk).
@@ -51,7 +62,8 @@ Parameter in `GEN` – nach Änderungen immer `node tests/run.js` laufen lassen 
   Playwright testen.
 - Lokaler Server: `node tools/devserver.js` → http://localhost:8777 (eigener Port!). Bei 390 px Breite durchklicken.
 - Test-Datum: `?datum=2026-10-20` an die URL hängen (simuliert einen anderen Tag).
-- Icons: SVGs mit `node tools/erzeuge-icon-svgs.js`, PNGs über http://localhost:8777/tools/icons.html.
+- Icons: `python3 tools/erzeuge-icons.py <maskottchen-referenz.png>` (Pillow). Die alten Dateien
+  `tools/erzeuge-icon-svgs.js`, `tools/icons.html`, `icons/icon-maskable.svg`, `icons/icon-apple.svg` sind veraltet.
 
 ## Veröffentlichen
 `git push` auf `main` → GitHub Pages aktualisiert sich automatisch. Vorher Version erhöhen, sonst kommt das

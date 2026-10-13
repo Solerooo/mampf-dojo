@@ -17,201 +17,259 @@
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>
 /* =====================================================================
-   STIL – Manga-Look: dicke Outlines, knallige Farben, Speedlines,
-   Halftone-Punkte, Sprechblasen. Mobile first (360–430 px).
+   STIL – „Shōnen-Kochshow“: Manga-Seite mit Rasterpapier, Tusche-Panels,
+   Kampf-HUD wie in einem Fighting-Game, Soundeffekt-Stempel.
+   Mut-Element: das HUD (Mampfi vs. Wochen-Boss). Rest bleibt ruhig.
+   Mobile first (360–430 px). Schriften lokal (OFL, siehe assets/fonts).
    ===================================================================== */
+@font-face { font-family: 'Bangers'; src: url('assets/fonts/bangers.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'DelaSFX'; src: url('assets/fonts/dela-gothic-sfx.woff2') format('woff2'); font-display: swap; }
+
 :root {
-  --ink: #15121f;
-  --bg: #fff1d0;
-  --bg-aussen: #ffd9e6;
-  --bg-dot: rgba(21, 18, 31, .09);
-  --panel: #ffffff;
-  --panel-2: #fff6df;
-  --text: #15121f;
-  --muted: #5d566e;
-  --gelb: #ffd23f;
-  --pink: #ff4f8b;
-  --rot: #ff3b3b;
-  --tuerkis: #29c5f6;
-  --lila: #7b5cff;
-  --gruen: #2fd18b;
-  --orange: #ff8a3d;
-  --linie: rgba(110, 100, 130, .3);
-  --rand: 3px solid var(--ink);
-  --schatten: 4px 4px 0 var(--ink);
-  --radius: 14px;
-  --nav-h: 64px;
+  /* Kernpalette */
+  --tusche: #1B1033;        /* Outlines & Text: tiefes Indigo wie Mampfis Haare */
+  --papier: #FFFFFF;        /* Panels */
+  --raster: #ECE6F6;        /* Seitenhintergrund (Rasterfolie) */
+  --raster-punkt: #D3C8E6;
+  --orange: #FF5A1F;        /* Aktion, Kalorien */
+  --pink: #FF2D7A;          /* XP, Level, Marke */
+  --gelb: #FFD400;          /* Highlights, Soundeffekte */
+  /* Ergänzung */
+  --cyan: #14BFEF;          /* Protein */
+  --gruen: #1FC777;         /* erledigt */
+  --violett: #6B35FF;       /* Boss */
+  --rot: #FF3344;           /* HP, Warnung */
+  --text: #1B1033;
+  --leise: #5E5275;
+  --panel-2: #F6F2FC;
+  --linie: rgba(27, 16, 51, .16);
+  --tinte: #1B1033;         /* Schrift auf hellen Farbflächen – in beiden Modi gleich */
+  --hud: #1B1033;           /* HUD & Navigation – immer dunkel */
+  --hud-2: #2C1F4D;
+  --kante: 3px solid var(--tusche);
+  --schatten: 5px 5px 0 var(--tusche);
+  --schatten-klein: 3px 3px 0 var(--tusche);
+  --nav-h: 66px;
   --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-titel: "Arial Black", "Helvetica Neue", Helvetica, system-ui, sans-serif;
+  --font-display: "Bangers", "Arial Black", Impact, system-ui, sans-serif;
+  --font-sfx: "DelaSFX", "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --ink: #000; --bg: #17131f; --bg-aussen: #0d0a14; --bg-dot: rgba(255, 255, 255, .05);
-    --panel: #272038; --panel-2: #312a47; --text: #f6f1ff; --muted: #b9b0cf; --linie: rgba(200, 190, 230, .22);
+    --tusche: #05020C; --papier: #221A3B; --raster: #130C24; --raster-punkt: #241A3F;
+    --text: #F7F2FF; --leise: #B9ADD3; --panel-2: #2C2249; --linie: rgba(247, 242, 255, .16);
+    --hud: #0B0716; --hud-2: #241A3F; --schatten: 5px 5px 0 #000; --schatten-klein: 3px 3px 0 #000;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --ink: #000; --bg: #17131f; --bg-aussen: #0d0a14; --bg-dot: rgba(255, 255, 255, .05);
-  --panel: #272038; --panel-2: #312a47; --text: #f6f1ff; --muted: #b9b0cf; --linie: rgba(200, 190, 230, .22);
+  --tusche: #05020C; --papier: #221A3B; --raster: #130C24; --raster-punkt: #241A3F;
+  --text: #F7F2FF; --leise: #B9ADD3; --panel-2: #2C2249; --linie: rgba(247, 242, 255, .16);
+  --hud: #0B0716; --hud-2: #241A3F; --schatten: 5px 5px 0 #000; --schatten-klein: 3px 3px 0 #000;
   color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 body {
-  margin: 0; font: 16px/1.45 var(--font); color: var(--text); background: var(--bg-aussen);
+  margin: 0; font: 16px/1.45 var(--font); color: var(--text); background: var(--hud);
   overflow-x: hidden; -webkit-tap-highlight-color: transparent;
 }
 body.sheet-offen { overflow: hidden; }
 button, input, select { font: inherit; }
-:focus-visible { outline: 3px solid var(--tuerkis); outline-offset: 2px; }
+img { max-width: 100%; }
+:focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; }
 .app {
   max-width: 480px; margin: 0 auto; min-height: 100vh; min-height: 100dvh; position: relative;
-  background-color: var(--bg);
-  background-image: radial-gradient(var(--bg-dot) 1.2px, transparent 1.5px);
-  background-size: 12px 12px;
+  background-color: var(--raster);
+  background-image: radial-gradient(var(--raster-punkt) 1.3px, transparent 1.6px);
+  background-size: 9px 9px;
 }
 @media (min-width: 520px) {
-  body { background-image: repeating-linear-gradient(-45deg, rgba(255, 255, 255, .25) 0 14px, transparent 14px 28px); }
-  .app { border-left: var(--rand); border-right: var(--rand); }
+  body { background-image: repeating-conic-gradient(from 0deg at 50% 40%, rgba(255, 212, 0, .08) 0 3deg, transparent 3deg 10deg); }
+  .app { border-left: 4px solid #000; border-right: 4px solid #000; }
 }
 .main {
   padding: calc(env(safe-area-inset-top) + 12px) 14px calc(var(--nav-h) + env(safe-area-inset-bottom) + 28px);
-  display: flex; flex-direction: column; gap: 14px; outline: none;
+  display: flex; flex-direction: column; gap: 16px; outline: none;
 }
-.muted { color: var(--muted); }
+.muted { color: var(--leise); }
 .klein { font-size: 13px; }
 p { margin: 6px 0; }
 h4 { margin: 12px 0 2px; font-size: 15px; }
 
 /* ---------- Typo ---------- */
-.titel { font-family: var(--font-titel); font-weight: 900; font-style: italic; text-transform: uppercase; font-size: 21px; line-height: 1.12; margin: 0; letter-spacing: .01em; overflow-wrap: anywhere; }
-.titel small { font-size: 14px; color: var(--muted); font-style: normal; }
-.titel-klein { font-family: var(--font-titel); font-weight: 900; font-size: 15px; text-transform: uppercase; margin: 0 0 8px; letter-spacing: .02em; }
-.titel-klein small { color: var(--muted); font-family: var(--font); }
+.titel { font-family: var(--font-display); font-weight: 400; font-size: 28px; line-height: 1.02; letter-spacing: .02em; margin: 0; overflow-wrap: anywhere; }
+.titel small { font-family: var(--font); font-size: 14px; color: var(--leise); letter-spacing: 0; }
+.titel-klein { font-family: var(--font-display); font-weight: 400; font-size: 21px; line-height: 1.05; letter-spacing: .03em; margin: 0 0 8px; }
+.titel-klein small { color: var(--leise); font-family: var(--font); font-size: 13px; letter-spacing: 0; }
 .titel-mega {
-  font-family: var(--font-titel); font-size: clamp(30px, 10vw, 44px); font-weight: 900; font-style: italic; text-align: center; margin: 4px 0 12px; white-space: nowrap;
-  color: var(--gelb); -webkit-text-stroke: 2px var(--ink); text-shadow: 4px 4px 0 var(--ink), 7px 7px 0 var(--pink); transform: rotate(-3deg);
+  font-family: var(--font-display); font-size: clamp(46px, 15vw, 64px); line-height: .9; text-align: center; margin: 2px 0 0;
+  color: var(--gelb); -webkit-text-stroke: 2.5px #000; paint-order: stroke fill;
+  text-shadow: 5px 5px 0 var(--pink), 8px 8px 0 #000; transform: rotate(-4deg); white-space: nowrap; letter-spacing: .02em;
 }
+.sfx-kana { font-family: var(--font-sfx); font-weight: 400; letter-spacing: .05em; }
+.titel-kana { display: block; text-align: center; font-family: var(--font-sfx); color: var(--pink); font-size: 15px; letter-spacing: .3em; margin: 6px 0 10px; }
 
-/* ---------- Panels, Speedlines ---------- */
-.panel { background: var(--panel); border: var(--rand); border-radius: var(--radius); box-shadow: var(--schatten); padding: 14px; position: relative; }
-.speed {
-  background-image: repeating-conic-gradient(from 0deg at 12% 18%, rgba(255, 210, 63, .32) 0deg 3deg, transparent 3deg 9deg);
-}
-.hero { padding-top: 12px; }
-.hero::after {
-  content: ''; position: absolute; right: -3px; top: -3px; width: 70px; height: 70px; pointer-events: none;
-  background: linear-gradient(225deg, var(--pink) 0 32%, var(--ink) 32% 36%, transparent 36%); border-top-right-radius: var(--radius);
-}
+/* ---------- Panels ---------- */
+.panel { background: var(--papier); border: var(--kante); border-radius: 6px; box-shadow: var(--schatten); padding: 14px; position: relative; }
+.speed { background-image: repeating-conic-gradient(from 0deg at 12% 18%, rgba(255, 212, 0, .28) 0deg 2.5deg, transparent 2.5deg 8deg); }
 
 /* ---------- Maskottchen & Sprechblase ---------- */
-.maskottchen { width: 86px; height: auto; flex: none; display: block; filter: drop-shadow(3px 3px 0 rgba(0, 0, 0, .18)); }
-.maskottchen.mittel { width: 104px; }
-.maskottchen.gross { width: 150px; }
+.maskottchen { width: 92px; height: auto; display: block; flex: none; filter: drop-shadow(3px 3px 0 rgba(0, 0, 0, .22)); user-select: none; -webkit-user-drag: none; }
+.maskottchen.mittel { width: 108px; }
+.maskottchen.gross { width: 168px; }
 .maskottchen-zeile { display: flex; align-items: flex-end; gap: 12px; }
-.maskottchen-zeile.klein .maskottchen { width: 60px; }
+.maskottchen-zeile.klein .maskottchen { width: 64px; }
 .blase {
-  position: relative; flex: 1; min-width: 0; background: #fff; color: #15121f; border: 3px solid #15121f; border-radius: 18px;
-  padding: 10px 12px; font-weight: 800; font-size: 15px; line-height: 1.35; box-shadow: 3px 3px 0 #15121f; margin-bottom: 18px;
+  position: relative; flex: 1; min-width: 0; background: #fff; color: #1B1033; border: 3px solid #1B1033; border-radius: 22px 22px 22px 6px;
+  padding: 10px 13px; font-weight: 800; font-size: 15px; line-height: 1.35; box-shadow: 3px 3px 0 #1B1033; margin-bottom: 22px;
 }
-.blase::before { content: ''; position: absolute; left: -15px; bottom: 12px; border-style: solid; border-width: 8px 15px 8px 0; border-color: transparent #15121f transparent transparent; }
-.blase::after { content: ''; position: absolute; left: -9px; bottom: 15px; border-style: solid; border-width: 5px 10px 5px 0; border-color: transparent #fff transparent transparent; }
+.blase::before { content: ''; position: absolute; left: -17px; bottom: 10px; border-style: solid; border-width: 9px 17px 9px 0; border-color: transparent #1B1033 transparent transparent; }
+.blase::after { content: ''; position: absolute; left: -10px; bottom: 13px; border-style: solid; border-width: 6px 11px 6px 0; border-color: transparent #fff transparent transparent; }
 .blase p { margin: 0; }
 
-/* ---------- Balken ---------- */
-.bar { height: 16px; border: 2.5px solid var(--ink); border-radius: 999px; background: var(--panel-2); overflow: hidden; margin: 4px 0 10px; }
-.bar i {
-  display: block; height: 100%; background-color: var(--pink); border-right: 2.5px solid var(--ink);
-  background-image: repeating-linear-gradient(-45deg, rgba(255, 255, 255, .38) 0 6px, transparent 6px 12px);
-  transition: width .6s cubic-bezier(.2, .9, .3, 1.15);
+/* ---------- Kampf-Leisten (alle Fortschrittsbalken) ---------- */
+.bar {
+  height: 17px; border: 2.5px solid var(--tusche); background: var(--panel-2); overflow: hidden; margin: 5px 4px 11px;
+  transform: skewX(-16deg); position: relative; border-radius: 2px;
 }
-.bar.kcal i { background-color: var(--orange); }
-.bar.kcal.voll i { background-color: var(--gruen); }
-.bar.protein i { background-color: var(--tuerkis); }
-.bar.xp i { background-color: var(--gelb); }
-.bar.hp i { background-color: var(--rot); }
+.bar i {
+  display: block; height: 100%; position: relative; z-index: 1; background-color: var(--pink);
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, .45) 0 38%, transparent 38% 100%);
+  transition: width .7s cubic-bezier(.2, .9, .3, 1.1); border-right: 2.5px solid var(--tusche);
+}
+.bar::after {
+  content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background: repeating-linear-gradient(90deg, transparent 0 calc(10% - 2px), rgba(27, 16, 51, .28) calc(10% - 2px) 10%);
+}
+.bar .geist { position: absolute; left: 0; top: 0; bottom: 0; z-index: 0; background: #fff; transition: width .9s ease-in .35s; }
+.bar.kcal i { background-color: var(--orange); background-image: linear-gradient(180deg, rgba(255, 255, 255, .4) 0 38%, transparent 38%), linear-gradient(90deg, var(--orange), var(--gelb)); }
+.bar.kcal.voll i { background-color: var(--gruen); background-image: linear-gradient(180deg, rgba(255, 255, 255, .4) 0 38%, transparent 38%), linear-gradient(90deg, #12B868, #7CF0A8); }
+.bar.protein i { background-color: var(--cyan); background-image: linear-gradient(180deg, rgba(255, 255, 255, .45) 0 38%, transparent 38%), linear-gradient(90deg, #0A9FD0, var(--cyan)); }
+.bar.xp i { background-color: var(--gelb); background-image: linear-gradient(180deg, rgba(255, 255, 255, .5) 0 38%, transparent 38%), linear-gradient(90deg, var(--pink), var(--gelb)); }
+.bar.hp i { background-color: var(--rot); background-image: linear-gradient(180deg, rgba(255, 255, 255, .4) 0 38%, transparent 38%), linear-gradient(90deg, #C3122A, var(--rot)); }
 .bar.gruen i { background-color: var(--gruen); }
 .bar.rot i { background-color: var(--rot); }
 .ziel-zeile { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-weight: 800; font-size: 14px; margin-top: 4px; }
-.ziel-zeile b { font-family: var(--font-titel); font-size: 18px; white-space: nowrap; }
-.ziel-zeile small { font-size: 12px; color: var(--muted); font-family: var(--font); }
+.ziel-zeile b { font-family: var(--font-display); font-weight: 400; font-size: 22px; letter-spacing: .03em; white-space: nowrap; }
+.ziel-zeile small { font-size: 13px; color: var(--leise); font-family: var(--font); font-weight: 700; letter-spacing: 0; }
 
-/* ---------- Level ---------- */
-.lvl-reihe { display: flex; align-items: center; gap: 12px; margin: 2px 0 8px; }
-.lvl-badge {
-  font-family: var(--font-titel); font-weight: 900; font-size: 18px; background: var(--pink); color: #fff; border: var(--rand);
-  border-radius: 10px; padding: 6px 10px; transform: rotate(-6deg); box-shadow: 3px 3px 0 var(--ink); flex: none; white-space: nowrap;
+/* ---------- HUD: Mampfi vs. Wochen-Boss ---------- */
+.hud {
+  position: relative; color: #fff; background: var(--hud); border: 3px solid #000; border-radius: 6px; padding: 12px 12px 18px;
+  box-shadow: 5px 5px 0 var(--pink); overflow: hidden; isolation: isolate;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 22px), calc(100% - 22px) 100%, 0 100%);
 }
-.lvl-info { flex: 1; min-width: 0; }
-.lvl-info .bar { margin: 4px 0 2px; height: 12px; }
-.lvl-info small, .rang-karte small { font-size: 12px; color: var(--muted); font-weight: 700; }
+.hud::before {
+  content: ''; position: absolute; inset: -40%; z-index: -1; opacity: .55;
+  background: repeating-conic-gradient(from 0deg at 50% 46%, rgba(255, 45, 122, .5) 0 2deg, transparent 2deg 9deg);
+}
+.hud::after {
+  content: ''; position: absolute; inset: 0; z-index: -1; opacity: .35;
+  background-image: radial-gradient(rgba(255, 255, 255, .28) 1px, transparent 1.4px); background-size: 7px 7px;
+  -webkit-mask-image: linear-gradient(180deg, transparent 40%, #000); mask-image: linear-gradient(180deg, transparent 40%, #000);
+}
+.hud-kopf { display: grid; grid-template-columns: 84px 1fr 34px 76px; gap: 8px 10px; align-items: center; }
+.hud-mitte { padding-left: 10px; }
+.hud-kopf.ohne-boss { grid-template-columns: 84px 1fr; }
+.hud-figur { position: relative; width: 84px; height: 84px; }
+.hud-portrait { position: relative; width: 84px; height: 84px; border: 3px solid #000; background: repeating-conic-gradient(from 0deg at 50% 60%, #FFE14D 0 8deg, var(--orange) 8deg 16deg); overflow: hidden; clip-path: polygon(0 0, 100% 0, 88% 100%, 0 100%); }
+.hud-portrait img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 0; transform: scale(1.18); transform-origin: 50% 8%; filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, .3)); }
+.hud-level {
+  position: absolute; right: -16px; bottom: -14px; z-index: 2; width: 50px; height: 50px; display: grid; place-items: center; align-content: center;
+  background: var(--pink); color: #fff; font-family: var(--font-display); font-size: 21px; line-height: .8; text-align: center;
+  clip-path: polygon(50% 0, 61% 30%, 95% 25%, 72% 52%, 92% 84%, 58% 72%, 50% 100%, 40% 72%, 6% 84%, 27% 52%, 4% 25%, 38% 30%);
+  -webkit-text-stroke: 1px #000; paint-order: stroke fill;
+}
+.hud-level small { display: block; font-size: 10px; letter-spacing: .05em; }
+.hud-mitte { min-width: 0; }
+.hud-rang { font-family: var(--font-display); font-size: 18px; letter-spacing: .03em; color: var(--gelb); line-height: 1.02; }
+.hud-mitte .bar { margin: 5px 3px 2px; height: 13px; border-color: #000; background: #120A25; }
+.hud-mitte small { color: #CFC4EA; font-size: 12px; font-weight: 700; }
+.hud-vs { font-family: var(--font-display); font-size: 30px; color: var(--gelb); -webkit-text-stroke: 1.5px #000; paint-order: stroke fill; text-shadow: 3px 3px 0 var(--pink); transform: rotate(-10deg); text-align: center; }
+.hud-boss { position: relative; text-align: center; }
+.hud-boss img { width: 70px; height: 62px; object-fit: contain; display: block; margin: 0 auto; filter: drop-shadow(2px 2px 0 #000); }
+.hud-boss .bar { margin: 3px 2px 0; height: 9px; border-width: 2px; border-color: #000; background: #120A25; }
+.hud-boss.besiegt img { filter: grayscale(1) drop-shadow(2px 2px 0 #000); transform: rotate(-12deg); opacity: .7; }
+.hud-werte { margin-top: 10px; }
+.hud-werte .ziel-zeile { color: #fff; }
+.hud-werte .ziel-zeile small { color: #CFC4EA; }
+.hud-werte .bar { border-color: #000; background: #120A25; height: 19px; }
+.hud-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
+.hud-chips .chip { background: #120A25; color: #fff; border-color: #000; }
+.hud-chips .chip-feuer { background: var(--orange); color: var(--tinte); }
+.hud-blase { margin: -4px 4px 0 18px; }
+.hud-blase .blase { margin: 0; border-radius: 6px 22px 22px 22px; }
+.hud-blase .blase::before { left: 22px; top: -17px; bottom: auto; border-width: 0 9px 17px 9px; border-color: transparent transparent #1B1033 transparent; }
+.hud-blase .blase::after { left: 25px; top: -10px; bottom: auto; border-width: 0 6px 11px 6px; border-color: transparent transparent #fff transparent; }
 
 /* ---------- Buttons ---------- */
 .btn {
-  font-weight: 900; min-height: 48px; padding: 10px 16px; border: var(--rand); border-radius: 12px; background: var(--gelb); color: #15121f;
-  box-shadow: 3px 3px 0 var(--ink); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-  text-align: center; text-decoration: none; touch-action: manipulation; transition: transform .08s, box-shadow .08s; line-height: 1.15;
+  font-family: var(--font-display); font-weight: 400; font-size: 20px; letter-spacing: .04em; line-height: 1.05;
+  min-height: 50px; padding: 10px 16px; border: var(--kante); border-radius: 10px; background: var(--gelb); color: var(--tinte);
+  box-shadow: 4px 4px 0 var(--tusche); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  text-align: center; text-decoration: none; touch-action: manipulation; transition: transform .07s, box-shadow .07s;
 }
-.btn:active:not(:disabled) { transform: translate(3px, 3px); box-shadow: 0 0 0 var(--ink); }
+.btn:active:not(:disabled) { transform: translate(4px, 4px); box-shadow: 0 0 0 var(--tusche); }
 .btn:disabled { opacity: .45; cursor: not-allowed; }
-.btn small { font-weight: 700; opacity: .8; font-size: 12px; }
-.btn-ghost { background: var(--panel); color: var(--text); }
-.btn-gross { min-height: 56px; font-size: 18px; }
-.btn-klein { min-height: 44px; padding: 8px 12px; font-size: 14px; }
-.btn-lila { background: var(--lila); color: #fff; }
-.btn-tuerkis { background: var(--tuerkis); }
+.btn small { font-family: var(--font); font-weight: 700; font-size: 12px; letter-spacing: 0; opacity: .85; }
+.btn-ghost { background: var(--papier); color: var(--text); }
+.btn-gross { min-height: 58px; font-size: 23px; }
+.btn-klein { min-height: 44px; padding: 8px 12px; font-size: 17px; }
+.btn-lila { background: var(--violett); color: #fff; }
+.btn-tuerkis { background: var(--cyan); }
 .btn-gruen { background: var(--gruen); }
 .btn-rot { background: var(--rot); color: #fff; margin-top: 12px; }
 .voll { width: 100%; }
-.knopf-reihe { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
-.btn-x { min-width: 44px; min-height: 44px; border: 0; background: none; font-size: 18px; color: var(--muted); cursor: pointer; border-radius: 10px; }
+.knopf-reihe { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
+.btn-x { min-width: 44px; min-height: 44px; border: 0; background: none; font-size: 18px; color: var(--leise); cursor: pointer; border-radius: 10px; }
 .btn-x.gross { font-size: 24px; color: var(--text); }
 .btn-fav { min-width: 48px; min-height: 48px; border: 0; background: none; font-size: 28px; cursor: pointer; margin-left: auto; flex: none; }
 
 /* ---------- Chips, Tags, Auswahl ---------- */
 .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
-.chip { font-size: 13px; font-weight: 800; padding: 5px 10px; border: 2px solid var(--ink); border-radius: 999px; background: var(--panel); color: var(--text); min-height: 32px; display: inline-flex; align-items: center; gap: 4px; }
+.chip { font-size: 13px; font-weight: 800; padding: 5px 11px; border: 2px solid var(--tusche); border-radius: 999px; background: var(--papier); color: var(--text); min-height: 32px; display: inline-flex; align-items: center; gap: 5px; }
 .chip-btn, .chip-link { cursor: pointer; min-height: 44px; }
-.chip-btn small { color: var(--muted); }
-.chip-feuer { background: var(--orange); color: #15121f; }
-.tag { display: inline-flex; align-items: center; gap: 3px; font-size: 12px; font-weight: 800; padding: 2px 8px; border: 2px solid var(--ink); border-radius: 999px; background: var(--panel-2); color: var(--text); white-space: nowrap; }
-.tag-reste { background: #c9f5df; color: #15121f; }
-.tag-koch, .tag-angebot { background: var(--gelb); color: #15121f; }
-.tag-mild { background: #d6f1ff; color: #15121f; }
-.tag-premium { background: #ffe08a; color: #15121f; }
-.tag-chill { background: var(--lila); color: #fff; }
+.chip-btn small { color: var(--leise); }
+.chip-feuer { background: var(--orange); color: var(--tinte); }
+.tag { display: inline-flex; align-items: center; gap: 3px; font-size: 12px; font-weight: 800; padding: 2px 9px; border: 2px solid var(--tusche); border-radius: 4px; background: var(--panel-2); color: var(--text); white-space: nowrap; transform: skewX(-8deg); }
+.tag-reste { background: #C9F5DF; color: var(--tinte); }
+.tag-koch, .tag-angebot { background: var(--gelb); color: var(--tinte); }
+.tag-mild { background: #D6F1FF; color: var(--tinte); }
+.tag-premium { background: #FFE27A; color: var(--tinte); }
+.tag-chill { background: var(--violett); color: #fff; }
 .tag-heute { background: var(--pink); color: #fff; }
-.tag-frisch { background: #ffdcdc; color: #15121f; }
+.tag-frisch { background: #FFDCDC; color: var(--tinte); }
 .wahl-reihe { display: flex; gap: 8px; flex-wrap: wrap; }
 .wahl {
-  font-weight: 800; min-height: 44px; padding: 8px 12px; border: 2.5px solid var(--ink); border-radius: 12px; background: var(--panel);
+  font-weight: 800; min-height: 44px; padding: 8px 12px; border: 2.5px solid var(--tusche); border-radius: 10px; background: var(--papier);
   color: var(--text); cursor: pointer; touch-action: manipulation;
 }
-.wahl.an { background: var(--gelb); color: #15121f; box-shadow: 2px 2px 0 var(--ink); }
-.wahl.an.rot { background: #ffc4c4; }
+.wahl.an { background: var(--gelb); color: var(--tinte); box-shadow: 3px 3px 0 var(--tusche); }
+.wahl.an.rot { background: #FFC4C4; }
 .wahl:disabled { opacity: .4; cursor: not-allowed; }
 .wahl small { font-weight: 600; opacity: .75; }
 .wochentage .wahl { min-width: 46px; }
 .wahl-liste { display: grid; gap: 8px; }
 .wahl-karte {
-  text-align: left; border: var(--rand); border-radius: 12px; background: var(--panel); color: var(--text); padding: 12px;
+  text-align: left; border: var(--kante); border-radius: 10px; background: var(--papier); color: var(--text); padding: 12px;
   min-height: 56px; cursor: pointer; display: flex; flex-direction: column; gap: 2px;
 }
-.wahl-karte span { font-size: 14px; color: var(--muted); }
-.wahl-karte.an { background: var(--gelb); color: #15121f; box-shadow: 3px 3px 0 var(--ink); }
-.wahl-karte.an span { color: #3a3348; }
+.wahl-karte b { font-family: var(--font-display); font-weight: 400; font-size: 20px; letter-spacing: .03em; }
+.wahl-karte span { font-size: 14px; color: var(--leise); }
+.wahl-karte.an { background: var(--gelb); color: var(--tinte); box-shadow: 4px 4px 0 var(--tusche); }
+.wahl-karte.an span { color: #3A2F55; }
 
 /* ---------- Formulare ---------- */
 .feld { display: flex; flex-direction: column; gap: 6px; margin: 10px 0; font-weight: 700; font-size: 14px; }
 input[type=text], input[type=number], input[type=search], input[type=date], input[type=url], select {
-  font-size: 16px; min-height: 48px; padding: 10px 12px; border: 2.5px solid var(--ink); border-radius: 10px;
-  background: var(--panel); color: var(--text); width: 100%; min-width: 0; -webkit-appearance: none; appearance: none;
+  font-size: 16px; min-height: 48px; padding: 10px 12px; border: 2.5px solid var(--tusche); border-radius: 8px;
+  background: var(--papier); color: var(--text); width: 100%; min-width: 0; -webkit-appearance: none; appearance: none;
+  box-shadow: inset 3px 3px 0 var(--panel-2);
 }
 select { background-image: linear-gradient(45deg, transparent 50%, var(--text) 50%), linear-gradient(135deg, var(--text) 50%, transparent 50%); background-position: calc(100% - 18px) 21px, calc(100% - 12px) 21px; background-size: 6px 6px; background-repeat: no-repeat; padding-right: 32px; }
-input[type=date] { min-width: 0; }
 input[type=range] { width: 100%; accent-color: var(--pink); min-height: 44px; }
 .feld-reihe { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .feld-reihe .feld { margin: 6px 0; }
@@ -225,205 +283,271 @@ input[type=range] { width: 100%; accent-color: var(--pink); min-height: 44px; }
 /* ---------- Statistik-Kacheln ---------- */
 .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 8px 0; }
 .stat-grid.drei, .stat-grid.sechs { grid-template-columns: repeat(3, 1fr); }
-.stat { background: var(--panel-2); border: 2.5px solid var(--ink); border-radius: 12px; padding: 8px 6px; text-align: center; display: flex; flex-direction: column; justify-content: center; min-height: 64px; min-width: 0; }
-.stat b { font-family: var(--font-titel); font-size: 17px; overflow-wrap: anywhere; }
-.stat span { font-size: 12px; color: var(--muted); font-weight: 700; }
-.stat.gelb { background: var(--gelb); color: #15121f; }
-.stat.gelb span { color: #3a3348; }
+.stat { background: var(--panel-2); border: 2.5px solid var(--tusche); border-radius: 8px; padding: 8px 6px; text-align: center; display: flex; flex-direction: column; justify-content: center; min-height: 66px; min-width: 0; }
+.stat b { font-family: var(--font-display); font-weight: 400; font-size: 23px; letter-spacing: .03em; line-height: 1.05; overflow-wrap: anywhere; }
+.stat span { font-size: 12px; color: var(--leise); font-weight: 700; }
+.stat.gelb { background: var(--gelb); color: var(--tinte); }
+.stat.gelb span { color: #3A2F55; }
 
-/* ---------- HEUTE: Mahlzeit-Karten ---------- */
-.tag-kopf { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
-.mahlzeit { padding: 12px; overflow: hidden; }
-.mahlzeit.gegessen { background: linear-gradient(0deg, rgba(47, 209, 139, .12), rgba(47, 209, 139, .12)), var(--panel); }
-.mz-kopf { display: flex; justify-content: space-between; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 4px; }
-.mz-slot { font-family: var(--font-titel); font-weight: 900; font-size: 12px; text-transform: uppercase; background: #15121f; color: #fff; padding: 3px 10px; border-radius: 6px; transform: skewX(-10deg); display: inline-block; letter-spacing: .03em; }
-.mz-tags { display: flex; gap: 4px; flex-wrap: wrap; }
-.mz-haupt { display: flex; gap: 12px; align-items: center; width: 100%; border: 0; background: none; padding: 4px 0; text-align: left; color: inherit; cursor: pointer; min-height: 64px; }
-.mz-emoji, .rk-emoji { font-size: 36px; width: 62px; height: 62px; flex: none; display: grid; place-items: center; background: var(--panel-2); border: 2.5px solid var(--ink); border-radius: 50%; box-shadow: 2px 2px 0 var(--ink); }
-.mz-text, .rk-text { min-width: 0; flex: 1; }
-.mz-text b, .rk-text b { display: block; font-size: 16.5px; line-height: 1.2; overflow-wrap: anywhere; }
-.mz-meta { display: flex; flex-wrap: wrap; gap: 3px 10px; font-size: 13px; color: var(--muted); margin-top: 4px; font-weight: 700; }
-.mz-knoepfe { display: grid; grid-template-columns: 1.45fr 1fr; gap: 10px; margin-top: 8px; }
-.btn-essen.an { background: var(--gruen); flex-direction: column; gap: 0; }
-.btn-essen.an small { font-size: 11px; }
-.tag-kopf + .knopf-reihe .btn { font-size: 15px; padding: 8px 10px; }
-.stempel {
-  position: absolute; left: 4px; top: 58px; font-family: var(--font-titel); font-weight: 900; font-size: 15px; color: var(--rot);
-  border: 3px solid var(--rot); border-radius: 8px; padding: 0 6px; transform: rotate(-14deg); opacity: .9; pointer-events: none;
-  background: rgba(255, 255, 255, .7); animation: stempel .35s cubic-bezier(.2, 1.6, .4, 1);
+/* ---------- HEUTE: Tageskopf & Mahlzeit-Panels ---------- */
+.tag-kopf { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 2px; }
+.tag-kopf .titel { font-size: 32px; }
+.tag-kopf + .knopf-reihe .btn { font-size: 18px; padding: 8px 10px; }
+.mahlzeit { padding: 0; overflow: hidden; }
+.mz-kopf { display: flex; justify-content: space-between; align-items: center; gap: 6px; flex-wrap: wrap; padding: 0 10px 0 0; background: var(--panel-2); border-bottom: var(--kante); min-height: 38px; }
+.mz-slot { display: inline-flex; align-items: baseline; gap: 8px; background: var(--tusche); color: #fff; padding: 6px 22px 6px 12px; clip-path: polygon(0 0, 100% 0, calc(100% - 14px) 100%, 0 100%); align-self: stretch; }
+.mz-slot-name { font-family: var(--font-display); font-size: 19px; letter-spacing: .05em; line-height: 1.2; }
+.mz-zeit { font-size: 12px; font-weight: 800; color: var(--gelb); }
+.mz-tags { display: flex; gap: 5px; flex-wrap: wrap; padding: 4px 0; }
+.mz-haupt { display: flex; gap: 12px; align-items: center; width: 100%; border: 0; background: none; padding: 12px 12px 4px; text-align: left; color: inherit; cursor: pointer; min-height: 64px; }
+.mz-emoji, .rk-emoji {
+  font-size: 36px; width: 66px; height: 66px; flex: none; display: grid; place-items: center; border: 3px solid var(--tusche); border-radius: 50%;
+  background: radial-gradient(circle, var(--papier) 0 52%, transparent 53%), repeating-conic-gradient(var(--gelb) 0 10deg, #FFE97A 10deg 20deg);
+  box-shadow: 3px 3px 0 var(--tusche);
 }
-@keyframes stempel { from { transform: rotate(-14deg) scale(2.4); opacity: 0; } to { transform: rotate(-14deg) scale(1); opacity: .85; } }
+.mz-text, .rk-text { min-width: 0; flex: 1; }
+.mz-text b, .rk-text b { display: block; font-size: 17px; line-height: 1.22; overflow-wrap: anywhere; }
+.mz-meta { display: flex; flex-wrap: wrap; gap: 4px 6px; margin-top: 6px; }
+.mz-meta > span { font-size: 12.5px; font-weight: 800; color: var(--text); background: var(--panel-2); border-radius: 4px; padding: 1px 6px; }
+.mz-knoepfe { display: grid; grid-template-columns: 1.45fr 1fr; gap: 12px; padding: 8px 12px 14px; }
+.btn-essen { background: var(--orange); color: #fff; -webkit-text-stroke: .6px var(--tinte); paint-order: stroke fill; text-shadow: 2px 2px 0 var(--tinte); font-size: 23px; }
+.btn-essen.an { background: var(--gruen); color: var(--tinte); text-shadow: none; -webkit-text-stroke: 0; flex-direction: column; gap: 0; font-size: 20px; }
+.btn-essen.an small { font-size: 11px; }
+.mahlzeit.gegessen .mz-haupt, .mahlzeit.gegessen .mz-kopf { background-image: radial-gradient(rgba(31, 199, 119, .22) 1.2px, transparent 1.5px); background-size: 6px 6px; }
+.stempel {
+  position: absolute; left: 6px; top: 64px; z-index: 2; pointer-events: none; text-align: center; transform: rotate(-16deg);
+  font-family: var(--font-display); font-size: 20px; line-height: .9; color: var(--rot); padding: 4px 8px 3px;
+  border: 3px solid var(--rot); border-radius: 8px; background: rgba(255, 255, 255, .86); box-shadow: 0 0 0 2px rgba(255, 255, 255, .86);
+  animation: stempel .38s cubic-bezier(.2, 1.7, .4, 1);
+}
+.stempel .sfx-kana { display: block; font-size: 10px; letter-spacing: .12em; margin-top: 2px; }
+@keyframes stempel { from { transform: rotate(-16deg) scale(2.6); opacity: 0; } to { transform: rotate(-16deg) scale(1); opacity: 1; } }
+
+/* Impact beim Abhaken: Panel-Ruck + Speedline-Explosion */
+.mahlzeit.impact { animation: impact .5s cubic-bezier(.3, 1.6, .5, 1); }
+.mahlzeit.impact::after {
+  content: ''; position: absolute; inset: -30%; z-index: 3; pointer-events: none;
+  background: repeating-conic-gradient(from 0deg at 18% 45%, rgba(255, 212, 0, .9) 0 2deg, transparent 2deg 11deg);
+  -webkit-mask-image: radial-gradient(circle at 18% 45%, transparent 0 18%, #000 19% 46%, transparent 62%);
+  mask-image: radial-gradient(circle at 18% 45%, transparent 0 18%, #000 19% 46%, transparent 62%);
+  animation: burst .55s ease-out forwards;
+}
+@keyframes impact { 0% { transform: scale(1); } 25% { transform: scale(1.035) rotate(-.6deg); } 50% { transform: scale(.99) rotate(.4deg); } 100% { transform: none; } }
+@keyframes burst { from { opacity: 1; transform: scale(.6); } to { opacity: 0; transform: scale(1.25); } }
+
 .extra .schnell-reihe { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
 .extra-liste { list-style: none; padding: 0; margin: 10px 0 0; display: flex; flex-direction: column; }
-.extra-liste li { display: grid; grid-template-columns: 1fr auto 44px; gap: 8px; align-items: center; font-size: 14px; border-bottom: 1.5px dashed var(--linie); min-height: 44px; }
-.hinweis { background: #e3f6ff; color: #15121f; border: 2.5px solid var(--ink); border-radius: 12px; padding: 10px 12px; font-size: 14px; margin: 8px 0; }
-.hinweis.warnung { background: #ffdede; }
+.extra-liste li { display: grid; grid-template-columns: 1fr auto 44px; gap: 8px; align-items: center; font-size: 14px; border-bottom: 2px dotted var(--linie); min-height: 44px; }
+.hinweis { background: #E3F6FF; color: var(--tinte); border: 2.5px solid var(--tusche); border-radius: 8px; padding: 10px 12px; font-size: 14px; margin: 8px 0; }
+.hinweis.warnung { background: #FFDEDE; }
 .hinweis .maskottchen-zeile { margin-bottom: 6px; }
-.hinweis-panel { background: #fff1c9; color: #15121f; }
+.hinweis-panel { background: #FFF1C9; color: var(--tinte); }
 .hinweis-panel ul { margin: 0; padding-left: 18px; }
 .leer { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; }
 
-/* ---------- WOCHE ---------- */
-.wochen-navi { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-weight: 900; }
-.boss { background: linear-gradient(135deg, #2a1f45, #51307a); color: #fff; overflow: hidden; }
-.boss::before { content: ''; position: absolute; inset: 0; background: repeating-conic-gradient(from 0deg at 85% 20%, rgba(255, 79, 139, .22) 0 4deg, transparent 4deg 11deg); pointer-events: none; }
-.boss > * { position: relative; }
-.boss-kopf { display: flex; gap: 12px; align-items: center; }
-.boss-kopf small { letter-spacing: .18em; font-weight: 900; color: var(--pink); font-size: 12px; }
-.boss .titel { color: var(--gelb); -webkit-text-stroke: 1px #000; text-shadow: 2px 2px 0 #000; font-size: 20px; }
-.boss-emoji { font-size: 56px; line-height: 1; filter: drop-shadow(3px 3px 0 #000); animation: boss-wackel 2.6s ease-in-out infinite; display: inline-block; }
+/* ---------- WOCHE: Boss-Panel & Tageskarten ---------- */
+.wochen-navi { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-family: var(--font-display); font-size: 19px; letter-spacing: .04em; }
+.boss {
+  color: #fff; background: #241048; border-color: #000; box-shadow: 5px 5px 0 var(--violett); overflow: hidden; isolation: isolate; padding: 14px 14px 18px;
+  clip-path: polygon(0 0, calc(100% - 26px) 0, 100% 26px, 100% 100%, 0 100%);
+}
+.boss::before { content: ''; position: absolute; inset: -40%; z-index: -1; background: repeating-conic-gradient(from 0deg at 50% 38%, rgba(107, 53, 255, .75) 0 3deg, transparent 3deg 10deg); }
+.boss::after { content: ''; position: absolute; inset: 0; z-index: -1; background: radial-gradient(circle at 50% 36%, rgba(255, 45, 122, .45), transparent 58%); }
+.boss-buehne { position: relative; display: grid; place-items: center; height: 196px; margin: -4px 0 4px; }
+.boss-buehne img { height: 190px; width: auto; filter: drop-shadow(4px 4px 0 #000); animation: boss-schweben 3.2s ease-in-out infinite; }
+.boss-kopf { display: flex; gap: 10px; align-items: flex-end; justify-content: space-between; }
+.boss-kopf small { font-weight: 800; color: #FFB3D0; font-size: 13px; }
+.boss .titel { color: var(--gelb); -webkit-text-stroke: 1.5px #000; paint-order: stroke fill; text-shadow: 3px 3px 0 #000; font-size: 34px; }
+.boss-emoji { font-size: 56px; line-height: 1; filter: drop-shadow(3px 3px 0 #000); display: inline-block; }
 .boss-emoji.riesig { font-size: 110px; }
-.boss.besiegt .boss-emoji { filter: grayscale(1) drop-shadow(3px 3px 0 #000); transform: rotate(90deg); animation: none; }
-.boss-spruch { font-style: italic; font-weight: 700; margin: 8px 0; }
-.boss .muted, .boss .ziel-zeile small { color: #ddd1f5; }
-@keyframes boss-wackel { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-5px) rotate(4deg); } }
+.boss.besiegt .boss-buehne img { filter: grayscale(1) drop-shadow(4px 4px 0 #000); transform: rotate(-14deg) translateY(10px); animation: none; opacity: .75; }
+.boss-ko { position: absolute; right: 8%; top: 14%; font-family: var(--font-display); font-size: 46px; color: var(--rot); -webkit-text-stroke: 2px #000; paint-order: stroke fill; text-shadow: 3px 3px 0 #000; transform: rotate(14deg); }
+.boss-spruch { position: relative; background: #fff; color: var(--tinte); border: 3px solid #000; border-radius: 16px; padding: 8px 12px; font-weight: 800; margin: 10px 0 12px; font-size: 15px; }
+.boss-spruch::before { content: ''; position: absolute; left: 50%; top: -16px; border-style: solid; border-width: 0 9px 16px 9px; border-color: transparent transparent #000 transparent; transform: translateX(-50%); }
+.boss .muted, .boss .ziel-zeile small { color: #DDD1F5; }
+.boss .bar { border-color: #000; background: #120A25; height: 20px; }
+@keyframes boss-schweben { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-7px) rotate(2deg); } }
 .tag-karte { padding: 12px; }
-.tag-karte.heute { border-color: var(--pink); box-shadow: 4px 4px 0 var(--pink); }
-.tag-karte.vorbei { opacity: .72; }
+.tag-karte.heute { border-color: var(--pink); box-shadow: 5px 5px 0 var(--pink); }
+.tag-karte.vorbei { opacity: .7; }
 .tag-karte-kopf { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 4px; }
-.tag-karte-werte { margin-left: auto; font-size: 13px; font-weight: 800; color: var(--muted); }
+.tag-karte-kopf > b { font-family: var(--font-display); font-weight: 400; font-size: 21px; letter-spacing: .04em; }
+.tag-karte-werte { margin-left: auto; font-size: 13px; font-weight: 800; color: var(--leise); display: flex; gap: 10px; }
 .tag-mahlzeiten { list-style: none; margin: 0; padding: 0; }
-.tag-mz { width: 100%; display: flex; gap: 8px; align-items: center; text-align: left; color: inherit; background: none; border: 0; border-top: 1.5px dashed var(--linie); min-height: 44px; padding: 6px 2px; cursor: pointer; }
+.tag-mz { width: 100%; display: flex; gap: 8px; align-items: center; text-align: left; color: inherit; background: none; border: 0; border-top: 2px dotted var(--linie); min-height: 44px; padding: 6px 2px; cursor: pointer; }
 .tag-mz-name { flex: 1; min-width: 0; font-weight: 700; font-size: 15px; }
 .tag-mz.gegessen .tag-mz-name { text-decoration: line-through; opacity: .6; }
 
 /* ---------- EINKAUF ---------- */
 .check-liste { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
-.check { display: grid; grid-template-columns: 32px 1fr auto; gap: 10px; align-items: center; min-height: 56px; padding: 8px 2px; border-bottom: 1.5px dashed var(--linie); cursor: pointer; position: relative; }
+.check { display: grid; grid-template-columns: 32px 1fr auto; gap: 10px; align-items: center; min-height: 56px; padding: 8px 2px; border-bottom: 2px dotted var(--linie); cursor: pointer; position: relative; }
 .check input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
-.check-box { width: 30px; height: 30px; border: var(--rand); border-radius: 8px; background: var(--panel); display: grid; place-items: center; transition: background .15s; }
+.check-box { width: 30px; height: 30px; border: var(--kante); border-radius: 6px; background: var(--papier); display: grid; place-items: center; transition: background .15s; transform: rotate(-3deg); }
 .check.an .check-box { background: var(--gruen); }
-.check.an .check-box::after { content: '✓'; font-weight: 900; color: #15121f; font-size: 20px; line-height: 1; }
-.check input:focus-visible + .check-box { outline: 3px solid var(--tuerkis); outline-offset: 2px; }
+.check.an .check-box::after { content: '✓'; font-weight: 900; color: var(--tinte); font-size: 20px; line-height: 1; }
+.check input:focus-visible + .check-box { outline: 3px solid var(--cyan); outline-offset: 2px; }
 .check.an .check-text b { text-decoration: line-through; opacity: .55; }
 .check.nichts { opacity: .6; cursor: default; }
 .check-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .check-text b { overflow-wrap: anywhere; }
 .check-text > span:last-child:empty { display: none; }
 .check-text .tag { margin-right: 4px; }
-.check-preis { font-weight: 900; font-size: 14px; white-space: nowrap; }
+.check-preis { font-family: var(--font-display); font-size: 18px; letter-spacing: .03em; white-space: nowrap; }
 .prospekte { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
 
 /* ---------- REZEPTE ---------- */
 .rezepte-kopf .wahl-reihe { margin-bottom: 2px; }
-.rezept-liste { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.rezept-liste { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
 .rezept-karte, .tausch-btn { display: flex; gap: 12px; align-items: center; width: 100%; text-align: left; color: inherit; cursor: pointer; padding: 10px 12px; }
-.rk-emoji { width: 56px; height: 56px; font-size: 32px; }
-.rk-tags { display: block; font-size: 12px; color: var(--muted); margin-top: 3px; font-weight: 700; }
+.rezept-karte:active, .tausch-btn:active { transform: translate(3px, 3px); box-shadow: 2px 2px 0 var(--tusche); }
+.rk-emoji { width: 58px; height: 58px; font-size: 31px; }
+.rk-tags { display: flex; flex-wrap: wrap; gap: 2px 12px; font-size: 12px; color: var(--leise); margin-top: 5px; font-weight: 700; }
 .tausch-liste { list-style: none; padding: 0; margin: 10px 0; display: flex; flex-direction: column; gap: 10px; }
 .rezept-kopf { display: flex; gap: 12px; align-items: center; margin: 4px 40px 8px 0; }
-.rezept-emoji { font-size: 54px; flex: none; line-height: 1; filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, .15)); }
+.rezept-unter { display: flex; flex-wrap: wrap; gap: 2px 12px; margin: 4px 0 0; }
+.rezept-emoji { font-size: 54px; flex: none; line-height: 1; filter: drop-shadow(3px 3px 0 rgba(0, 0, 0, .18)); }
 .zutaten { list-style: none; margin: 4px 0 12px; padding: 0; }
-.zutaten li { display: flex; justify-content: space-between; gap: 8px; padding: 9px 2px; border-bottom: 1.5px dashed var(--linie); font-weight: 600; }
+.zutaten li { display: flex; justify-content: space-between; gap: 8px; padding: 9px 2px; border-bottom: 2px dotted var(--linie); font-weight: 600; }
 .schritte { margin: 6px 0 12px; padding: 0; list-style: none; counter-reset: s; }
-.schritte li { counter-increment: s; position: relative; padding: 7px 0 9px 44px; min-height: 42px; }
+.schritte li { counter-increment: s; position: relative; padding: 7px 0 9px 46px; min-height: 42px; }
 .schritte li::before {
-  content: counter(s); position: absolute; left: 0; top: 4px; width: 32px; height: 32px; display: grid; place-items: center;
-  background: var(--pink); color: #fff; font-weight: 900; border: 2.5px solid var(--ink); border-radius: 50%; font-family: var(--font-titel);
+  content: counter(s); position: absolute; left: 0; top: 2px; width: 34px; height: 34px; display: grid; place-items: center;
+  background: var(--pink); color: #fff; font-family: var(--font-display); font-size: 19px; border: 3px solid var(--tusche);
+  clip-path: polygon(50% 0, 100% 38%, 82% 100%, 18% 100%, 0 38%);
 }
 .tipps { padding: 0; list-style: none; margin: 6px 0 12px; }
 .tipps li { margin: 6px 0; }
 
 /* ---------- Bottom-Sheet ---------- */
-.sheet-hintergrund { position: fixed; inset: 0; background: rgba(10, 6, 20, .55); z-index: 40; animation: einblenden .2s; }
+.sheet-hintergrund { position: fixed; inset: 0; background: rgba(12, 6, 26, .6); z-index: 40; animation: einblenden .2s; }
 .sheet {
   position: fixed; left: 50%; bottom: 0; transform: translateX(-50%); width: 100%; max-width: 480px; max-height: 88vh; max-height: 88dvh;
-  overflow-y: auto; overscroll-behavior: contain; background: var(--panel); color: var(--text); border: var(--rand); border-bottom: 0;
-  border-radius: 22px 22px 0 0; z-index: 41; padding: 12px 16px calc(20px + env(safe-area-inset-bottom)); animation: hoch .28s cubic-bezier(.2, .9, .3, 1.1); outline: none;
+  overflow-y: auto; overscroll-behavior: contain; background: var(--papier); color: var(--text); border: 4px solid var(--tusche); border-bottom: 0;
+  border-radius: 20px 20px 0 0; z-index: 41; padding: 12px 16px calc(20px + env(safe-area-inset-bottom)); animation: hoch .28s cubic-bezier(.2, .9, .3, 1.1); outline: none;
+  box-shadow: 0 -6px 0 var(--pink);
 }
 .sheet.gross { max-height: 94vh; max-height: 94dvh; }
-.sheet-griff { width: 48px; height: 5px; border-radius: 3px; background: var(--muted); opacity: .5; margin: 0 auto 6px; }
+.sheet-griff { width: 52px; height: 6px; border-radius: 3px; background: var(--tusche); opacity: .35; margin: 0 auto 6px; }
 .sheet-x { position: absolute; top: 6px; right: 6px; z-index: 3; }
 .sheet-inhalt > .titel:first-child { margin-right: 44px; }
 .sticky-unten { position: sticky; bottom: 0; z-index: 2; }
 .angebot-liste { list-style: none; padding: 0; margin: 6px 0 14px; display: flex; flex-direction: column; }
-.angebot-liste li { display: flex; flex-direction: column; gap: 4px; border-bottom: 1.5px dashed var(--linie); padding: 0 4px; }
-.angebot-liste li.an { background: rgba(255, 210, 63, .22); border-radius: 8px; padding-bottom: 8px; }
+.angebot-liste li { display: flex; flex-direction: column; gap: 4px; border-bottom: 2px dotted var(--linie); padding: 0 4px; }
+.angebot-liste li.an { background: rgba(255, 212, 0, .22); border-radius: 6px; padding-bottom: 8px; }
 .angebot-btn { display: flex; gap: 10px; align-items: center; text-align: left; width: 100%; min-height: 48px; font-weight: 700; color: inherit; background: none; border: 0; cursor: pointer; }
 @keyframes hoch { from { transform: translate(-50%, 100%); } to { transform: translate(-50%, 0); } }
 @keyframes einblenden { from { opacity: 0; } to { opacity: 1; } }
 
-/* ---------- Overlays (Level-Up, Boss, Meilenstein, Laden) ---------- */
-.overlay { position: fixed; inset: 0; z-index: 92; display: grid; place-items: center; background: rgba(12, 6, 24, .9); padding: 20px; overflow: hidden; animation: einblenden .2s; }
-.overlay-speed { position: absolute; inset: -60%; background: repeating-conic-gradient(from 0deg, rgba(255, 210, 63, .3) 0 4deg, transparent 4deg 12deg); animation: drehen 22s linear infinite; }
+/* ---------- Overlays: Level-Up-Verwandlung, Boss besiegt, Meilenstein, Laden ---------- */
+.overlay { position: fixed; inset: 0; z-index: 92; display: grid; place-items: center; background: rgba(11, 7, 22, .93); padding: 20px; overflow: hidden; animation: einblenden .2s; }
+.overlay-speed { position: absolute; inset: -60%; background: repeating-conic-gradient(from 0deg, rgba(255, 212, 0, .3) 0 3deg, transparent 3deg 11deg); animation: drehen 24s linear infinite; }
 .overlay-inhalt { position: relative; text-align: center; color: #fff; display: flex; flex-direction: column; align-items: center; gap: 10px; max-width: 380px; }
 .overlay-gross {
-  font-family: var(--font-titel); font-size: 44px; font-weight: 900; font-style: italic; color: var(--gelb); margin: 0; line-height: 1.05;
-  -webkit-text-stroke: 2px #000; text-shadow: 4px 4px 0 var(--pink), 7px 7px 0 #000; transform: rotate(-4deg); animation: pop .55s cubic-bezier(.2, 1.6, .4, 1);
+  font-family: var(--font-display); font-size: 58px; line-height: .92; color: var(--gelb); margin: 0; letter-spacing: .02em;
+  -webkit-text-stroke: 2.5px #000; paint-order: stroke fill; text-shadow: 5px 5px 0 var(--pink), 9px 9px 0 #000; transform: rotate(-5deg);
+  animation: pop .55s cubic-bezier(.2, 1.6, .4, 1) both;
 }
-.overlay-level { font-family: var(--font-titel); font-size: 30px; margin: 0; color: #fff; text-shadow: 3px 3px 0 #000; }
+.overlay-kana { font-family: var(--font-sfx); color: var(--pink); font-size: 18px; letter-spacing: .3em; margin: 0; text-shadow: 2px 2px 0 #000; }
+.overlay-level { font-family: var(--font-display); font-size: 40px; margin: 0; color: #fff; letter-spacing: .04em; -webkit-text-stroke: 1.5px #000; paint-order: stroke fill; text-shadow: 3px 3px 0 #000; }
 .overlay-text { font-size: 18px; font-weight: 700; margin: 0; }
 .overlay-text.klein { font-size: 15px; opacity: .9; }
 .overlay .maskottchen { filter: drop-shadow(4px 4px 0 #000); }
+.overlay .maskottchen.gross { width: 190px; }
+/* Level-Up als Verwandlungsszene: Blitz → Aura → Pose → Schriftzug */
+.verwandlung::before { content: ''; position: absolute; inset: 0; background: #fff; z-index: 3; pointer-events: none; animation: blitz .6s ease-out forwards; }
+.verwandlung .overlay-speed { background: repeating-conic-gradient(from 0deg, rgba(255, 212, 0, .55) 0 2deg, rgba(255, 45, 122, .25) 2deg 4deg, transparent 4deg 10deg); animation-duration: 6s; }
+.aura { position: relative; display: grid; place-items: center; }
+.aura::before { content: ''; position: absolute; width: 230px; height: 230px; border-radius: 50%; background: radial-gradient(circle, rgba(255, 212, 0, .85), rgba(255, 90, 31, .35) 45%, transparent 70%); animation: aura 1.1s ease-in-out infinite alternate; }
+.verwandlung .maskottchen { position: relative; animation: auftritt .7s cubic-bezier(.2, 1.5, .4, 1) .25s both; }
+.aura .maskottchen { -webkit-mask-image: radial-gradient(closest-side, #000 86%, transparent 100%); mask-image: radial-gradient(closest-side, #000 86%, transparent 100%); }
+.verwandlung .overlay-gross { animation-delay: .55s; }
+.verwandlung .overlay-level { animation: pop .5s cubic-bezier(.2, 1.6, .4, 1) .8s both; }
+@keyframes blitz { 0% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes aura { from { transform: scale(.9); opacity: .75; } to { transform: scale(1.12); opacity: 1; } }
+@keyframes auftritt { from { transform: scale(.2) translateY(60px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes pop { from { transform: rotate(-5deg) scale(.3); opacity: 0; } to { transform: rotate(-5deg) scale(1); opacity: 1; } }
+@keyframes drehen { to { transform: rotate(360deg); } }
+.boss-overlay-bild { height: 210px; width: auto; filter: grayscale(.85) drop-shadow(4px 4px 0 #000); animation: ko 1s cubic-bezier(.3, 1.4, .5, 1) both; }
+@keyframes ko { 0% { transform: scale(1.1); filter: none; } 30% { transform: translateX(-10px) rotate(-4deg); } 45% { transform: translateX(10px) rotate(4deg); } 100% { transform: rotate(-16deg) translateY(16px); } }
 .wackel { animation: wackel .6s ease-in-out infinite; }
 @keyframes wackel { 0%, 100% { transform: rotate(-7deg); } 50% { transform: rotate(7deg); } }
-@keyframes pop { from { transform: rotate(-4deg) scale(.3); } to { transform: rotate(-4deg) scale(1); } }
-@keyframes drehen { to { transform: rotate(360deg); } }
 .konfetti { position: fixed; inset: 0; pointer-events: none; z-index: 93; overflow: hidden; }
 .konfetti i { position: absolute; top: -24px; width: 10px; height: 16px; border: 1.5px solid #000; border-radius: 2px; animation-name: fallen; animation-timing-function: linear; animation-fill-mode: forwards; }
 @keyframes fallen { to { transform: translate(var(--x), 112vh) rotate(var(--dreh)); } }
 .xp-float {
-  position: fixed; z-index: 80; transform: translate(-50%, 0); font-family: var(--font-titel); font-weight: 900; font-size: 26px; pointer-events: none;
-  color: var(--gelb); -webkit-text-stroke: 1.5px #000; text-shadow: 3px 3px 0 #000; animation: xp-hoch 1.25s ease-out forwards; white-space: nowrap;
+  position: fixed; z-index: 80; transform: translate(-50%, 0); font-family: var(--font-display); font-size: 34px; pointer-events: none; letter-spacing: .03em;
+  color: var(--gelb); -webkit-text-stroke: 2px #000; paint-order: stroke fill; text-shadow: 3px 3px 0 var(--pink); animation: xp-hoch 1.2s ease-out forwards; white-space: nowrap;
 }
-.xp-float.minus { color: var(--rot); }
-@keyframes xp-hoch { 0% { opacity: 0; transform: translate(-50%, 10px) scale(.6); } 15% { opacity: 1; transform: translate(-50%, -12px) scale(1.25); } 100% { opacity: 0; transform: translate(-50%, -90px) scale(1); } }
+.xp-float.minus { color: var(--rot); text-shadow: 3px 3px 0 #000; }
+@keyframes xp-hoch { 0% { opacity: 0; transform: translate(-50%, 10px) scale(.5); } 18% { opacity: 1; transform: translate(-50%, -14px) scale(1.3); } 100% { opacity: 0; transform: translate(-50%, -96px) scale(1); } }
+/* Boss-Treffer im HUD */
+.hud-boss.treffer img { animation: treffer .5s ease-out; }
+@keyframes treffer { 0% { transform: none; filter: brightness(3) drop-shadow(2px 2px 0 #000); } 20% { transform: translateX(-6px) rotate(-8deg); } 40% { transform: translateX(6px) rotate(6deg); } 60% { transform: translateX(-3px); } 100% { transform: none; } }
+.schaden {
+  position: fixed; z-index: 81; pointer-events: none; transform: translate(-50%, 0); font-family: var(--font-display); font-size: 30px; letter-spacing: .03em;
+  color: #fff; -webkit-text-stroke: 2px var(--rot); paint-order: stroke fill; text-shadow: 3px 3px 0 #000; animation: schaden 1.1s ease-out forwards;
+}
+@keyframes schaden { 0% { opacity: 0; transform: translate(-50%, 0) scale(.4); } 20% { opacity: 1; transform: translate(-50%, -18px) scale(1.25); } 100% { opacity: 0; transform: translate(-30%, -60px) scale(1); } }
 
 /* ---------- Toasts & Update-Banner ---------- */
 #toast-root { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(var(--nav-h) + env(safe-area-inset-bottom) + 12px); z-index: 90; display: flex; flex-direction: column; gap: 8px; width: min(440px, calc(100% - 24px)); pointer-events: none; }
-.toast { background: #15121f; color: #fff; border: 3px solid var(--gelb); border-radius: 12px; padding: 10px 14px; font-weight: 700; box-shadow: 3px 3px 0 rgba(0, 0, 0, .35); animation: toast-rein .3s cubic-bezier(.2, 1.4, .4, 1); transition: opacity .4s, transform .4s; }
+.toast { background: var(--hud); color: #fff; border: 3px solid var(--gelb); border-radius: 8px; padding: 10px 14px; font-weight: 700; box-shadow: 4px 4px 0 #000; animation: toast-rein .3s cubic-bezier(.2, 1.4, .4, 1); transition: opacity .4s, transform .4s; }
 .toast.weg { opacity: 0; transform: translateY(10px); }
 .toast.erfolg { border-color: var(--pink); }
 .toast.fehler { border-color: var(--rot); }
 @keyframes toast-rein { from { opacity: 0; transform: translateY(16px) scale(.95); } to { opacity: 1; transform: none; } }
 .update-banner {
   position: fixed; top: calc(env(safe-area-inset-top) + 8px); left: 50%; transform: translateX(-50%); width: min(460px, calc(100% - 20px)); z-index: 95;
-  background: var(--lila); color: #fff; border: var(--rand); border-radius: 14px; box-shadow: var(--schatten); padding: 6px 6px 6px 14px; display: flex; align-items: center; gap: 8px; font-weight: 900;
+  background: var(--violett); color: #fff; border: 3px solid #000; border-radius: 10px; box-shadow: 4px 4px 0 #000; padding: 6px 6px 6px 14px; display: flex; align-items: center; gap: 8px; font-weight: 900;
 }
 .update-banner span { flex: 1; }
 .update-banner .btn-x { color: #fff; }
 
 /* ---------- Kochmodus ---------- */
-.kochmodus { position: fixed; inset: 0; z-index: 65; background: var(--bg); color: var(--text); display: flex; flex-direction: column; max-width: 480px; margin: 0 auto; padding-top: env(safe-area-inset-top); }
-.koch-kopf { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 6px 8px 6px 16px; font-weight: 900; border-bottom: var(--rand); background: var(--panel); }
+.kochmodus { position: fixed; inset: 0; z-index: 65; background: var(--raster); color: var(--text); display: flex; flex-direction: column; max-width: 480px; margin: 0 auto; padding-top: env(safe-area-inset-top); }
+.koch-kopf { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 6px 8px 6px 16px; font-family: var(--font-display); font-size: 20px; letter-spacing: .03em; border-bottom: 3px solid #000; background: var(--hud); color: #fff; }
+.koch-kopf .btn-x { color: #fff; }
 .koch-fortschritt { display: flex; gap: 4px; padding: 10px 14px; }
-.koch-fortschritt i { flex: 1; height: 9px; border-radius: 5px; border: 2px solid var(--ink); background: var(--panel); }
+.koch-fortschritt i { flex: 1; height: 10px; border: 2px solid var(--tusche); background: var(--papier); transform: skewX(-16deg); }
 .koch-fortschritt i.fertig { background: var(--gruen); }
 .koch-fortschritt i.aktiv { background: var(--gelb); }
 .koch-inhalt { flex: 1; overflow-y: auto; padding: 14px 20px; display: flex; flex-direction: column; gap: 14px; align-items: stretch; }
 .koch-inhalt .maskottchen { align-self: center; }
-.koch-nr { font-family: var(--font-titel); text-transform: uppercase; color: var(--pink); margin: 0; font-size: 16px; }
-.koch-schritt { font-size: 27px; line-height: 1.32; font-weight: 800; margin: 0; }
+.koch-nr { font-family: var(--font-display); color: var(--pink); margin: 0; font-size: 22px; letter-spacing: .05em; }
+.koch-schritt { font-size: 27px; line-height: 1.32; font-weight: 800; margin: 0; background: var(--papier); border: var(--kante); border-radius: 8px; box-shadow: var(--schatten); padding: 16px; }
 .koch-zutaten summary { font-weight: 900; min-height: 44px; display: flex; align-items: center; cursor: pointer; }
-.koch-fuss { display: grid; grid-template-columns: 1fr 1.4fr; gap: 10px; padding: 12px 14px calc(12px + env(safe-area-inset-bottom)); border-top: var(--rand); background: var(--panel); }
+.koch-fuss { display: grid; grid-template-columns: 1fr 1.4fr; gap: 12px; padding: 12px 14px calc(12px + env(safe-area-inset-bottom)); border-top: 3px solid #000; background: var(--hud); }
 
 /* ---------- PROFIL ---------- */
-.rang-karte { display: flex; gap: 14px; align-items: center; }
+.rang-karte { display: flex; gap: 14px; align-items: center; background: var(--hud); color: #fff; border-color: #000; box-shadow: 5px 5px 0 var(--pink); overflow: hidden; isolation: isolate; }
+.rang-karte::before { content: ''; position: absolute; inset: -40%; z-index: -1; background: repeating-conic-gradient(from 0deg at 20% 50%, rgba(255, 45, 122, .45) 0 2deg, transparent 2deg 9deg); }
 .rang-karte > div { flex: 1; min-width: 0; }
-.rang-level { font-family: var(--font-titel); font-size: 52px; margin: 0; line-height: 1; color: var(--pink); -webkit-text-stroke: 2px var(--ink); text-shadow: 3px 3px 0 var(--ink); }
-.chart { width: 100%; height: auto; display: block; background: var(--panel-2); border: 2.5px solid var(--ink); border-radius: 12px; }
-.ch-grid { stroke: var(--muted); stroke-opacity: .28; stroke-width: 1; }
-.ch-label { font-size: 10px; fill: var(--muted); font-family: var(--font); font-weight: 700; }
+.rang-karte small { font-size: 12px; color: #CFC4EA; font-weight: 700; }
+.rang-karte .bar { border-color: #000; background: #120A25; }
+.rang-level { font-family: var(--font-display); font-size: 64px; margin: 0; line-height: .9; color: var(--gelb); -webkit-text-stroke: 2px #000; paint-order: stroke fill; text-shadow: 4px 4px 0 var(--pink); }
+.chart { width: 100%; height: auto; display: block; background: var(--panel-2); border: 2.5px solid var(--tusche); border-radius: 8px; }
+.ch-grid { stroke: var(--leise); stroke-opacity: .28; stroke-width: 1; }
+.ch-label { font-size: 10px; fill: var(--leise); font-family: var(--font); font-weight: 700; }
 .ch-linie { fill: none; stroke: var(--pink); stroke-width: 3.5; stroke-linejoin: round; stroke-linecap: round; }
-.ch-prognose { fill: none; stroke: var(--tuerkis); stroke-width: 3; stroke-dasharray: 7 6; stroke-linecap: round; }
+.ch-prognose { fill: none; stroke: var(--cyan); stroke-width: 3; stroke-dasharray: 7 6; stroke-linecap: round; }
 .ch-ziel { stroke: var(--gruen); stroke-width: 2.5; stroke-dasharray: 4 4; }
 .ch-ziel-text { fill: var(--text); font-weight: 900; font-size: 11px; }
-.ch-punkt { fill: #fff; stroke: #15121f; stroke-width: 2.5; }
-.ch-start { fill: var(--gelb); stroke: #15121f; stroke-width: 2.5; }
+.ch-punkt { fill: #fff; stroke: #1B1033; stroke-width: 2.5; }
+.ch-start { fill: var(--gelb); stroke: #1B1033; stroke-width: 2.5; }
 .chart-legende { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .leg { display: inline-block; width: 18px; height: 0; border-top: 3.5px solid var(--pink); margin-left: 6px; }
-.leg-prognose { border-top: 3px dashed var(--tuerkis); }
+.leg-prognose { border-top: 3px dashed var(--cyan); }
 .leg-ziel { border-top: 2.5px dashed var(--gruen); }
 .ww-text { min-height: 3em; }
 .gesperrt summary { min-height: 44px; display: flex; align-items: center; font-weight: 800; cursor: pointer; margin-top: 8px; }
 .gewicht-liste summary { min-height: 44px; display: flex; align-items: center; font-weight: 800; cursor: pointer; }
 .erfolge { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-.erfolge li { border: 2.5px solid var(--ink); border-radius: 12px; padding: 8px; background: var(--panel-2); display: flex; flex-direction: column; gap: 2px; opacity: .6; }
-.erfolge li.an { opacity: 1; background: var(--gelb); color: #15121f; box-shadow: 2px 2px 0 var(--ink); }
+.erfolge li { border: 2.5px solid var(--tusche); border-radius: 8px; padding: 8px; background: var(--panel-2); display: flex; flex-direction: column; gap: 2px; opacity: .6; }
+.erfolge li.an { opacity: 1; background: var(--gelb); color: var(--tinte); box-shadow: 3px 3px 0 var(--tusche); }
 .erfolg-emoji { font-size: 26px; line-height: 1.1; }
 .erfolge b { font-size: 14px; line-height: 1.2; overflow-wrap: anywhere; }
-.erfolge small { font-size: 12px; color: var(--muted); }
-.erfolge li.an small { color: #3a3348; }
+.erfolge small { font-size: 12px; color: var(--leise); }
+.erfolge li.an small { color: #3A2F55; }
 .einst-titel { margin: 10px 0 -4px; }
 .einstellung { padding: 0; }
 .einstellung summary { padding: 12px 16px; font-weight: 900; font-size: 16px; cursor: pointer; list-style: none; min-height: 52px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
@@ -437,10 +561,10 @@ input[type=range] { width: 100%; accent-color: var(--pink); min-height: 44px; }
 /* ---------- Onboarding ---------- */
 .onboarding { display: flex; flex-direction: column; gap: 14px; padding-bottom: 12px; }
 .ob-punkte { display: flex; gap: 6px; justify-content: center; }
-.ob-punkte i { width: 26px; height: 9px; border-radius: 5px; border: 2px solid var(--ink); background: var(--panel); }
+.ob-punkte i { width: 28px; height: 10px; border: 2px solid var(--tusche); background: var(--papier); transform: skewX(-16deg); }
 .ob-punkte i.an { background: var(--pink); }
 .ob-hero { display: grid; place-items: center; padding: 6px; }
-.ob-hero.speed { background-image: repeating-conic-gradient(from 0deg at 50% 55%, rgba(255, 79, 139, .25) 0 4deg, transparent 4deg 11deg); border-radius: 50%; }
+.ob-hero.speed { background-image: repeating-conic-gradient(from 0deg at 50% 55%, rgba(255, 45, 122, .28) 0 3deg, transparent 3deg 10deg); border-radius: 50%; }
 .ob-lead { font-size: 17px; }
 .ob-liste { list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 6px; font-weight: 800; }
 .ob-knoepfe { display: flex; gap: 10px; }
@@ -450,20 +574,26 @@ input[type=range] { width: 100%; accent-color: var(--pink); min-height: 44px; }
 /* ---------- Navigation ---------- */
 .nav {
   position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; z-index: 30;
-  display: grid; grid-template-columns: repeat(5, 1fr); background: var(--panel); border-top: var(--rand); padding-bottom: env(safe-area-inset-bottom);
+  display: grid; grid-template-columns: repeat(5, 1fr); background: var(--hud); border-top: 4px solid #000; padding-bottom: env(safe-area-inset-bottom);
+  box-shadow: 0 -4px 0 var(--pink);
 }
 .nav[hidden] { display: none; }
-.nav-btn { min-height: var(--nav-h); border: 0; background: none; color: var(--text); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; position: relative; cursor: pointer; touch-action: manipulation; }
-.nav-icon { font-size: 24px; line-height: 1; transition: transform .15s; }
-.nav-name { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: .02em; }
-.nav-btn.aktiv { background: var(--gelb); color: #15121f; box-shadow: inset 0 -5px 0 var(--pink); }
-.nav-btn.aktiv .nav-icon { transform: translateY(-2px) scale(1.15) rotate(-6deg); }
-.nav-dot { position: absolute; top: 9px; left: calc(50% + 10px); width: 11px; height: 11px; border-radius: 50%; background: var(--pink); border: 2px solid var(--ink); }
+.nav-btn { min-height: var(--nav-h); border: 0; background: none; color: #CFC4EA; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; position: relative; cursor: pointer; touch-action: manipulation; isolation: isolate; }
+.nav-icon { font-size: 25px; line-height: 1; transition: transform .15s; }
+.nav-name { font-family: var(--font-display); font-size: 15px; letter-spacing: .06em; line-height: 1; }
+.nav-btn.aktiv { color: var(--gelb); }
+.nav-btn.aktiv::before {
+  content: ''; position: absolute; z-index: -1; width: 46px; height: 46px; top: 1px; background: var(--pink);
+  clip-path: polygon(50% 0, 61% 30%, 95% 25%, 72% 52%, 92% 84%, 58% 72%, 50% 100%, 40% 72%, 6% 84%, 27% 52%, 4% 25%, 38% 30%);
+}
+.nav-btn.aktiv .nav-icon { transform: translateY(-3px) scale(1.12) rotate(-6deg); }
+.nav-dot { position: absolute; top: 9px; left: calc(50% + 12px); width: 12px; height: 12px; border-radius: 50%; background: var(--orange); border: 2px solid #000; }
 
 /* ---------- Bewegung reduzieren ---------- */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
-  .overlay-speed, .boss-emoji, .wackel { animation: none !important; }
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; animation-delay: 0s !important; transition-duration: .001ms !important; }
+  .overlay-speed, .boss-buehne img, .wackel, .aura::before { animation: none !important; }
+  .verwandlung::before, .mahlzeit.impact::after { display: none; }
 }
 </style>
 </head>
@@ -485,7 +615,7 @@ input[type=range] { width: 100%; accent-color: var(--pink); min-height: 44px; }
 /* ---------------------------------------------------------------------
    App-Version: Bei JEDER Änderung hier UND in sw.js (VERSION) erhöhen!
    --------------------------------------------------------------------- */
-const APP_VERSION = '1.0.2';
+const APP_VERSION = '1.1.0';
 
 /* Supermarkt-Abteilungen in Lauf-Reihenfolge (Einkaufsliste wird so sortiert) */
 const ABTEILUNGEN = [
@@ -1537,20 +1667,20 @@ const RAENGE = [
   { abLevel: 30, name: 'Legendärer Küchen-Kaiser', emoji: '👑' },
 ];
 
-/* Wochen-Bosse – jede Woche ein anderer (rotierend) */
+/* Wochen-Bosse – jede Woche ein anderer (rotierend). bild = Datei in assets/bilder/bosse/ */
 const BOSSE = [
-  { name: 'Graf Kalorula',               emoji: '🧛', spruch: 'Ich sauge dir die Kalorien aus den Knochen!' },
-  { name: 'Die Diät-Hexe Knäckeline',    emoji: '🧙‍♀️', spruch: 'Ein Salatblatt am Tag reicht doch, hihihi!' },
-  { name: 'Salat-Samurai Sparsamu',      emoji: '🥬', spruch: 'Mein Schwert schneidet jede Portion halb!' },
-  { name: 'Der Leere-Teller-Golem',      emoji: '🍽️', spruch: 'Mein Bauch ist leer – und deiner auch!' },
-  { name: 'Hunger-Hydra',                emoji: '🐉', spruch: 'Für jede Mahlzeit, die du auslässt, wächst mir ein Kopf!' },
-  { name: 'Captain Kalorienloch',        emoji: '🏴‍☠️', spruch: 'Arrr! Ich versenke deine Snacks im Meer!' },
-  { name: 'Reiswaffel-Ronin',            emoji: '🍘', spruch: 'Luft und Knusper – mehr brauchst du nicht!' },
-  { name: 'Zero-Fett-Zombie',            emoji: '🧟', spruch: 'Fettarm … Zuckerfrei … Geschmacklos …' },
-  { name: 'Detox-Dämon Dürrbert',        emoji: '👹', spruch: 'Nur grüner Saft! Und Wasser! Und Tränen!' },
-  { name: 'Mecha-Magerquark MK-II',      emoji: '🤖', spruch: 'SYSTEM: PORTIONSGRÖSSE AUF 10 % REDUZIERT.' },
-  { name: 'Lord Lauchstange',            emoji: '🥢', spruch: 'Dünn wie ein Strich – so mag ich dich!' },
-  { name: 'Snack-Saboteur Schmalhans',   emoji: '🦹', spruch: 'Ich hab deinen Kühlschrank auf Sparflamme gestellt!' },
+  { name: 'Ramen-Ronin',          bild: 'ramen-ronin',        emoji: '🍜', spruch: 'Meine Nudeln sind länger als deine Ausdauer!' },
+  { name: 'Burger-Golem',         bild: 'burger-golem',       emoji: '🍔', spruch: 'Drei Patties hoch – und du schaffst nicht mal einen!' },
+  { name: 'Sushi-Samurai',        bild: 'sushi-samurai',      emoji: '🍣', spruch: 'Mein Gurkenschwert schneidet jeden Hunger ab!' },
+  { name: 'Curry-Drache',         bild: 'curry-drache',       emoji: '🍛', spruch: 'Mein Atem ist mild – mein Appetit nicht!' },
+  { name: 'Pancake-Titan',        bild: 'pancake-titan',      emoji: '🥞', spruch: 'Ich bin ein Turm aus Fluff. Du bist ein Häufchen Hunger!' },
+  { name: 'Taco-Bandit',          bild: 'taco-bandit',        emoji: '🌮', spruch: 'Teller her! Mein Lasso ist aus Käse!' },
+  { name: 'Gyoza-Ninja',          bild: 'gyoza-ninja',        emoji: '🥟', spruch: 'Knusprig unten, gefährlich oben – du siehst mich nicht kommen!' },
+  { name: 'Mac-&-Cheese-Schleim', bild: 'mac-cheese-schleim', emoji: '🧀', spruch: 'Blubb! Ich ziehe Fäden – und dich gleich mit!' },
+  { name: 'Brezn-Baron',          bild: 'brezn-baron',        emoji: '🥨', spruch: 'Servus! Ein Baron isst mit Monokel – und mehr als du!' },
+  { name: 'Onigiri-Oger',         bild: 'onigiri-oger',       emoji: '🍙', spruch: 'Ein Reisbällchen mit Fäusten aus Reis. Komm doch her!' },
+  { name: 'Pizza-Phantom',        bild: 'pizza-phantom',      emoji: '🍕', spruch: 'Huuuh … ich spuke in deinem leeren Magen!' },
+  { name: 'Bubble-Tea-Kraken',    bild: 'bubble-tea-kraken',  emoji: '🧋', spruch: 'Acht Arme, tausend Perlen – mampf mich, wenn du kannst!' },
 ];
 
 /* Erfolge – check(s) bekommt das Statistik-Objekt (siehe berechneStatistik) */
@@ -3053,69 +3183,42 @@ function zahl(v) { const n = parseFloat(String(v).replace(',', '.')); return isF
 function reduzierteBewegung() { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } }
 function vibriere(muster) { try { if (navigator.vibrate) navigator.vibrate(muster); } catch (e) { /* egal */ } }
 function speichern() { speichereZustand(Z); }
-function balken(wert, max, klasse, label) {
+/* Kampf-Leiste. Mit schluessel läuft sie vom letzten angezeigten Wert zum neuen (Geist-Balken bei Verlust). */
+const BALKEN_ALT = {};
+function balken(wert, max, klasse, label, schluessel) {
   const p = max > 0 ? clamp(wert / max * 100, 0, 100) : 0;
-  return `<div class="bar ${klasse || ''}" role="progressbar" aria-valuemin="0" aria-valuemax="${Math.round(max)}" aria-valuenow="${Math.round(wert)}" ${label ? `aria-label="${esc(label)}"` : ''}><i style="width:${p.toFixed(1)}%"></i></div>`;
+  let start = p, geist = '';
+  if (schluessel) {
+    const alt = BALKEN_ALT[schluessel];
+    if (alt != null && Math.abs(alt - p) > 0.05 && !reduzierteBewegung()) {
+      start = alt;
+      if (alt > p) geist = `<span class="geist" style="width:${alt.toFixed(1)}%" data-geist="${p.toFixed(1)}"></span>`;
+    }
+    BALKEN_ALT[schluessel] = p;
+  }
+  return `<div class="bar ${klasse || ''}" role="progressbar" aria-valuemin="0" aria-valuemax="${Math.round(max)}" aria-valuenow="${Math.round(wert)}" ${label ? `aria-label="${esc(label)}"` : ''}>${geist}<i style="width:${start.toFixed(1)}%" ${start !== p ? `data-ziel="${p.toFixed(1)}"` : ''}></i></div>`;
+}
+function animiereBalken() {
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    document.querySelectorAll('.bar i[data-ziel]').forEach(i => { i.style.width = i.dataset.ziel + '%'; i.removeAttribute('data-ziel'); });
+    document.querySelectorAll('.bar .geist[data-geist]').forEach(g => { g.style.width = g.dataset.geist + '%'; g.removeAttribute('data-geist'); });
+  }));
 }
 const AUFWAND_ICON = ['🥄', '🔥', '🔥🔥'];
 function aufwandChip(a) { return `<span class="chip chip-aufwand" title="${AUFWAND_TEXT[a]}">${AUFWAND_ICON[a]} ${AUFWAND_TEXT[a]}</span>`; }
 function schaerfeIcon(s) { return s > 0 ? '🌶️'.repeat(s) : ''; }
 
 /* =====================================================================
-   MASKOTTCHEN „Sensei Mampfi“ – eigenes Chibi-Koch-Design als Inline-SVG
-   Ausdrücke: freut, stolz, besorgt, muede, wow, kampf
+   MASKOTTCHEN „Sensei Mampfi“ – eigene Figur, illustriert (assets/bilder/maskottchen)
+   Ausdrücke: freut, stolz, besorgt, muede, kampf, levelup (wow → freut)
    ===================================================================== */
-const INK = '#15121f';
-const GESICHTER = {
-  freut: `<path d="M38 74 Q45 65 52 74" fill="none" stroke="${INK}" stroke-width="4" stroke-linecap="round"/>
-    <path d="M68 74 Q75 65 82 74" fill="none" stroke="${INK}" stroke-width="4" stroke-linecap="round"/>
-    <path d="M49 84 Q60 100 71 84 Z" fill="#7a1f3d" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/>
-    <path d="M54 91 Q60 97 66 91 Q60 88 54 91 Z" fill="#ff7a9c"/>
-    <path d="M100 30 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3 z" fill="#ffd23f" stroke="${INK}" stroke-width="2"/>`,
-  stolz: `<path d="M36 64 L50 61" stroke="${INK}" stroke-width="3.5" stroke-linecap="round"/><path d="M84 64 L70 61" stroke="${INK}" stroke-width="3.5" stroke-linecap="round"/>
-    <path d="M38 74 Q45 70 52 74" fill="none" stroke="${INK}" stroke-width="4" stroke-linecap="round"/>
-    <ellipse cx="75" cy="73" rx="6" ry="7.5" fill="${INK}"/><circle cx="77" cy="70" r="2.4" fill="#fff"/>
-    <path d="M46 84 Q60 98 76 82 Z" fill="#fff" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/><path d="M48 86 L74 84" stroke="${INK}" stroke-width="2"/>
-    <path d="M14 34 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3 z" fill="#ffd23f" stroke="${INK}" stroke-width="2"/>
-    <path d="M103 46 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2 z" fill="#29c5f6" stroke="${INK}" stroke-width="1.5"/>`,
-  besorgt: `<path d="M37 64 L51 59" stroke="${INK}" stroke-width="3.5" stroke-linecap="round"/><path d="M83 64 L69 59" stroke="${INK}" stroke-width="3.5" stroke-linecap="round"/>
-    <circle cx="45" cy="74" r="6.5" fill="#fff" stroke="${INK}" stroke-width="3"/><circle cx="46" cy="75" r="2.6" fill="${INK}"/>
-    <circle cx="75" cy="74" r="6.5" fill="#fff" stroke="${INK}" stroke-width="3"/><circle cx="74" cy="75" r="2.6" fill="${INK}"/>
-    <path d="M49 90 Q54 85 60 90 Q66 95 71 90" fill="none" stroke="${INK}" stroke-width="3.5" stroke-linecap="round"/>
-    <path d="M95 52 Q101 62 95 66 Q89 62 95 52 Z" fill="#7fd8ff" stroke="${INK}" stroke-width="2.5"/>`,
-  muede: `<path d="M38 75 Q45 79 52 75" fill="none" stroke="${INK}" stroke-width="4" stroke-linecap="round"/>
-    <path d="M68 75 Q75 79 82 75" fill="none" stroke="${INK}" stroke-width="4" stroke-linecap="round"/>
-    <path d="M37 71 L52 71 M68 71 L83 71" stroke="${INK}" stroke-width="2.5" stroke-linecap="round" opacity=".7"/>
-    <ellipse cx="60" cy="90" rx="5" ry="6" fill="#7a1f3d" stroke="${INK}" stroke-width="3"/>
-    <text x="92" y="40" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="18" fill="${INK}">Z</text>
-    <text x="104" y="26" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="12" fill="${INK}">z</text>`,
-  wow: `<ellipse cx="45" cy="73" rx="7.5" ry="9" fill="${INK}"/><circle cx="48" cy="69" r="3.2" fill="#fff"/><circle cx="43" cy="77" r="1.6" fill="#fff"/>
-    <ellipse cx="75" cy="73" rx="7.5" ry="9" fill="${INK}"/><circle cx="78" cy="69" r="3.2" fill="#fff"/><circle cx="73" cy="77" r="1.6" fill="#fff"/>
-    <ellipse cx="60" cy="91" rx="6" ry="5" fill="#7a1f3d" stroke="${INK}" stroke-width="3"/>
-    <path d="M18 48 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2 z" fill="#ffd23f" stroke="${INK}" stroke-width="1.5"/>
-    <path d="M100 32 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3 z" fill="#ffd23f" stroke="${INK}" stroke-width="2"/>`,
-  kampf: `<path d="M36 61 L52 67" stroke="${INK}" stroke-width="4" stroke-linecap="round"/><path d="M84 61 L68 67" stroke="${INK}" stroke-width="4" stroke-linecap="round"/>
-    <ellipse cx="45" cy="75" rx="5.5" ry="6.5" fill="${INK}"/><circle cx="46.5" cy="73" r="2" fill="#fff"/>
-    <ellipse cx="75" cy="75" rx="5.5" ry="6.5" fill="${INK}"/><circle cx="76.5" cy="73" r="2" fill="#fff"/>
-    <rect x="48" y="85" width="24" height="9" rx="2" fill="#fff" stroke="${INK}" stroke-width="3"/><path d="M54 85 V94 M60 85 V94 M66 85 V94" stroke="${INK}" stroke-width="1.6"/>
-    <path d="M98 60 Q108 50 102 38 Q112 44 110 58 Q114 52 113 46 Q120 60 106 68 Z" fill="#ff8a3d" stroke="${INK}" stroke-width="2"/>`,
-};
+const MASKOTTCHEN_BILDER = { freut: 'freut', stolz: 'stolz', besorgt: 'besorgt', muede: 'muede', wow: 'freut', kampf: 'kampf', levelup: 'levelup' };
+const MASKOTTCHEN_MASSE = { freut: [274, 400], stolz: [251, 400], besorgt: [203, 400], muede: [248, 400], kampf: [334, 400], levelup: [326, 400] };
 function maskottchen(ausdruck, klasse) {
-  const g = GESICHTER[ausdruck] || GESICHTER.freut;
-  return `<svg class="maskottchen ${klasse || ''}" viewBox="0 0 120 130" role="img" aria-label="Sensei Mampfi (${esc(ausdruck)})">
-  <path d="M28 130 Q30 100 60 98 Q90 100 92 130 Z" fill="#fff" stroke="${INK}" stroke-width="3.5"/>
-  <path d="M45 130 V108 Q60 101 75 108 V130" fill="#ff4f8b" stroke="${INK}" stroke-width="3"/>
-  <path d="M55 120 L60 112 L65 120 Z" fill="#fff" stroke="${INK}" stroke-width="2" stroke-linejoin="round"/>
-  <ellipse cx="60" cy="72" rx="37" ry="33" fill="#ffe2c6" stroke="${INK}" stroke-width="3.5"/>
-  <path d="M24 70 Q22 50 34 45 L86 45 Q98 50 96 70 L90 60 L84 67 L78 55 L70 64 L62 52 L54 64 L46 55 L40 67 L32 58 Z" fill="#3b2a63" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/>
-  <path d="M33 42 Q22 26 37 19 Q41 5 60 9 Q79 5 83 19 Q98 26 87 42 Z" fill="#fff" stroke="${INK}" stroke-width="3.5" stroke-linejoin="round"/>
-  <path d="M47 24 Q50 18 56 20 M66 18 Q72 17 74 23" fill="none" stroke="${INK}" stroke-width="2" stroke-linecap="round" opacity=".5"/>
-  <rect x="31" y="36" width="58" height="12" rx="4" fill="#ff4f8b" stroke="${INK}" stroke-width="3.5"/>
-  <path d="M56 46 L60 38 L64 46 Z" fill="#fff" stroke="${INK}" stroke-width="1.8" stroke-linejoin="round"/>
-  <ellipse cx="36" cy="83" rx="6.5" ry="4" fill="#ff8fb1" opacity=".85"/><ellipse cx="84" cy="83" rx="6.5" ry="4" fill="#ff8fb1" opacity=".85"/>
-  ${g}
-</svg>`;
+  const datei = MASKOTTCHEN_BILDER[ausdruck] || 'freut', m = MASKOTTCHEN_MASSE[datei];
+  return `<img class="maskottchen ${klasse || ''}" src="assets/bilder/maskottchen/${datei}.webp" width="${m[0]}" height="${m[1]}" alt="Sensei Mampfi (${esc(ausdruck)})" decoding="async" draggable="false">`;
 }
+function bossBild(w) { return 'assets/bilder/bosse/' + BOSSE[w.boss % BOSSE.length].bild + '.webp'; }
 function sprechblase(sp, klasse) {
   return `<div class="maskottchen-zeile ${klasse || ''}">${maskottchen(sp.ausdruck)}<div class="blase"><p>${esc(sp.text)}</p></div></div>`;
 }
@@ -3149,6 +3252,25 @@ function render() {
       <span class="nav-icon" aria-hidden="true">${t.icon}</span><span class="nav-name">${t.name}</span>${t.id === 'einkauf' && einkaufOffen ? '<span class="nav-dot" aria-label="Einkauf offen"></span>' : ''}</button>`).join('');
   const r = { heute: renderHeute, woche: renderWoche, einkauf: renderEinkauf, rezepte: renderRezepte, profil: renderProfil }[UI.tab];
   main.innerHTML = (SPEICHER.ok ? '' : `<div class="hinweis warnung">⚠️ Speichern ist gerade nicht möglich (privater Modus?). Deine Daten gehen beim Schließen verloren – exportiere ein Backup!</div>`) + r();
+  animiereBalken();
+  wendeEffekteAn();
+}
+/* Reaktions-Effekte nach einer Aktion: Impact auf der Karte, Treffer am Boss */
+function wendeEffekteAn() {
+  const e = UI.effekt;
+  UI.effekt = null;
+  if (!e || reduzierteBewegung()) return;
+  const karte = document.querySelector(`.mahlzeit[data-karte="${e.karte}"]`);
+  if (karte) { karte.classList.add('impact'); setTimeout(() => karte.classList.remove('impact'), 700); }
+  const boss = document.querySelector('.hud-boss');
+  if (boss && e.kcal) {
+    boss.classList.add('treffer');
+    const r = boss.getBoundingClientRect(), z = document.createElement('div');
+    z.className = 'schaden'; z.textContent = '−' + fmtZahl(e.kcal);
+    z.style.left = (r.left + r.width / 2) + 'px'; z.style.top = (r.top + 6) + 'px';
+    $('#overlay-root').appendChild(z);
+    setTimeout(() => { z.remove(); boss.classList.remove('treffer'); }, 1150);
+  }
 }
 /* Woche für die Tabs Woche/Einkauf: gewählte, sonst aktuelle, sonst kommende, sonst letzte */
 function sichtbareWochen() { return Z.wochen.filter(w => w.tage.length).sort((a, b) => a.start < b.start ? -1 : 1); }
@@ -3221,7 +3343,7 @@ function renderOnboarding() {
   let inhalt = '';
   if (s === 0) {
     inhalt = `<div class="ob-hero speed">${maskottchen('freut', 'gross')}</div>
-      <h1 class="titel-mega">MAMPF-DOJO</h1>
+      <h1 class="titel-mega">MAMPF-DOJO</h1><span class="titel-kana" aria-hidden="true">マンプ・ドージョー</span>
       <p class="ob-lead">Ich bin <b>Sensei Mampfi</b>! Ich plane dir jeden Tag 5 leckere Mahlzeiten, mache dir eine Einkaufsliste für <b>einen</b> Einkauf pro Woche, halte dein Budget ein – und du sammelst XP fürs Futtern. Zunehmen als Quest!</p>
       <ul class="ob-liste"><li>🍱 5 Mahlzeiten mit kcal & Protein</li><li>🛒 1× pro Woche einkaufen</li><li>💶 Budget im Griff</li><li>⚔️ XP, Level & Wochen-Bosse</li><li>📈 Prognose bis zum Zielgewicht</li></ul>`;
   } else if (s === 1) {
@@ -3319,21 +3441,26 @@ function kurzPrognose() {
   if (p.fix.status === 'defizit') return '📉 Schnitt unter Verbrauch';
   return `📈 Plateau bei ca. ${fmtKg(p.fix.plateauKg)}`;
 }
-function heroPanel(e) {
+function heroPanel(e, ft) {
   const lvlP = (SP.xp - SP.levelStart) / (SP.levelEnde - SP.levelStart);
   const kq = e.kcal / e.ziel.kcal;
-  return `<section class="hero panel speed">
-    ${sprechblase(UI.spruch)}
-    <div class="lvl-reihe">
-      <span class="lvl-badge">LV ${SP.level}</span>
-      <div class="lvl-info"><b>${SP.rang.emoji} ${SP.rang.name}</b>${balken(lvlP * 100, 100, 'xp', 'XP bis zum nächsten Level')}<small>${fmtZahl(SP.xp - SP.levelStart)} / ${fmtZahl(SP.levelEnde - SP.levelStart)} XP</small></div>
+  const b = ft ? bossStatus(ft.woche, SP.tu) : null;
+  return `<section class="hero hud" aria-label="Dein Tag als Kampf">
+    <div class="hud-kopf ${b ? '' : 'ohne-boss'}">
+      <div class="hud-figur"><div class="hud-portrait">${maskottchen(UI.spruch.ausdruck)}</div><span class="hud-level" aria-label="Level ${SP.level}"><small>LV</small>${SP.level}</span></div>
+      <div class="hud-mitte"><div class="hud-rang">${SP.rang.emoji} ${SP.rang.name}</div>${balken(lvlP * 100, 100, 'xp', 'XP bis zum nächsten Level', 'xp')}<small>${fmtZahl(SP.xp - SP.levelStart)} / ${fmtZahl(SP.levelEnde - SP.levelStart)} XP</small></div>
+      ${b ? `<div class="hud-vs" aria-hidden="true">VS</div>
+      <div class="hud-boss ${b.besiegt ? 'besiegt' : ''}"><img src="${bossBild(ft.woche)}" alt="Wochen-Boss ${esc(b.name)}" width="70" height="62" decoding="async">${balken(b.rest, b.hp, 'hp', 'Boss-Lebenspunkte', 'boss-mini')}</div>` : ''}
     </div>
-    <div class="ziel-zeile"><span>🔥 Kalorien</span><b>${fmtZahl(e.kcal)} <small>/ ${fmtZahl(e.ziel.kcal)} kcal</small></b></div>
-    ${balken(e.kcal, e.ziel.kcal, 'kcal ' + (kq >= XP.zielQuote ? 'voll' : ''), 'Kalorien heute')}
-    <div class="ziel-zeile"><span>💪 Protein</span><b>${fmtZahl(e.protein)} <small>/ ${e.ziel.protein} g</small></b></div>
-    ${balken(e.protein, e.ziel.protein, 'protein', 'Protein heute')}
-    <div class="chips"><span class="chip chip-feuer">🔥 Streak ${SP.streak}${SP.multHeute > 1 ? ` · ×${fmtZahl(SP.multHeute, 1)} XP` : ''}</span><button class="chip chip-link" data-a="tab" data-tab="profil">${kurzPrognose()}</button></div>
-  </section>`;
+    <div class="hud-werte">
+      <div class="ziel-zeile"><span>🔥 Kalorien</span><b>${fmtZahl(e.kcal)} <small>/ ${fmtZahl(e.ziel.kcal)} kcal</small></b></div>
+      ${balken(e.kcal, e.ziel.kcal, 'kcal ' + (kq >= XP.zielQuote ? 'voll' : ''), 'Kalorien heute', 'kcal')}
+      <div class="ziel-zeile"><span>💪 Protein</span><b>${fmtZahl(e.protein)} <small>/ ${e.ziel.protein} g</small></b></div>
+      ${balken(e.protein, e.ziel.protein, 'protein', 'Protein heute', 'protein')}
+    </div>
+    <div class="hud-chips"><span class="chip chip-feuer">🔥 Streak ${SP.streak}</span>${SP.multHeute > 1 ? `<span class="chip">×${fmtZahl(SP.multHeute, 1)} XP-Bonus</span>` : ''}<button class="chip chip-link" data-a="tab" data-tab="profil">${kurzPrognose()}</button></div>
+  </section>
+  <div class="hud-blase"><div class="blase"><p>${esc(UI.spruch.text)}</p></div></div>`;
 }
 function mahlzeitKarte(w, wi, ti, si, A, nurLesen) {
   const tag = w.tage[ti], slot = tag.slots[si], r = rezeptVon(slot.rid, slot.mild), inf = A.slotInfo[ti][si], S = SLOTS[si];
@@ -3345,8 +3472,8 @@ function mahlzeitKarte(w, wi, ti, si, A, nurLesen) {
   if (slot.getauscht === 'magen') tags.push('<span class="tag">🫶</span>');
   if (r.istMild) tags.push('<span class="tag tag-mild">mild</span>');
   if (r.premium) tags.push('<span class="tag tag-premium">⭐ Premium</span>');
-  return `<article class="mahlzeit panel ${slot.gegessen ? 'gegessen' : ''}">
-    <header class="mz-kopf"><span class="mz-slot">${S.emoji} ${S.name} · ${S.zeit}</span><span class="mz-tags">${tags.join('')}</span></header>
+  return `<article class="mahlzeit panel ${slot.gegessen ? 'gegessen' : ''}" data-karte="${wi}-${ti}-${si}">
+    <header class="mz-kopf"><span class="mz-slot"><span class="mz-slot-name">${S.name}</span><span class="mz-zeit">${S.zeit}</span></span><span class="mz-tags">${tags.join('')}</span></header>
     <button class="mz-haupt" data-a="rezept" data-rid="${r.id}" data-mild="${slot.mild ? 1 : 0}" ${ctx} aria-label="Rezept ${esc(r.name)} öffnen">
       <span class="mz-emoji" aria-hidden="true">${r.emoji}</span>
       <span class="mz-text"><b>${esc(r.name)}</b>
@@ -3357,7 +3484,7 @@ function mahlzeitKarte(w, wi, ti, si, A, nurLesen) {
       <button class="btn btn-essen ${slot.gegessen ? 'an' : ''}" data-a="essen" ${ctx} aria-pressed="${slot.gegessen}">${slot.gegessen ? '<span>✓ Gegessen</span><small>tippen = rückgängig</small>' : 'Gegessen!'}</button>
       <button class="btn btn-ghost" data-a="tauschen" ${ctx} ${slot.gegessen ? 'disabled' : ''}>🔄 Tauschen</button>
     </div>`}
-    ${slot.gegessen ? '<div class="stempel" aria-hidden="true">MAMPF!</div>' : ''}
+    ${slot.gegessen ? '<div class="stempel" aria-hidden="true">MAMPF!<span class="sfx-kana">モグモグ</span></div>' : ''}
   </article>`;
 }
 const EXTRA_SCHNELL = [
@@ -3369,7 +3496,7 @@ const EXTRA_SCHNELL = [
 function renderHeute() {
   const h = heute(), ft = findeTag(Z, h);
   const e = SP.tu[h] || { kcal: 0, protein: 0, ziel: { kcal: ziele(Z).kcal, protein: ziele(Z).protein } };
-  let html = heroPanel(e);
+  let html = heroPanel(e, ft);
   if (!ft) {
     html += `<section class="panel leer">${maskottchen('besorgt', 'mittel')}<h2 class="titel">Kein Plan für heute</h2>
       <p>Lass uns schnell deinen Wochenplan erstellen – dauert nur ein paar Sekunden.</p>
@@ -3425,11 +3552,12 @@ function renderWoche() {
   const warn = w.warnungen || [];
   let html = wochenNavi(w);
   html += `<section class="panel boss ${b.besiegt ? 'besiegt' : ''}">
-    <div class="boss-kopf"><span class="boss-emoji" aria-hidden="true">${b.emoji}</span><div><small>WOCHEN-BOSS</small><h2 class="titel">${esc(b.name)}</h2></div></div>
+    <div class="boss-kopf"><div><small>Wochen-Boss</small><h2 class="titel">${esc(b.name)}</h2></div></div>
+    <div class="boss-buehne"><img src="${bossBild(w)}" alt="${esc(b.name)}" width="380" height="380" decoding="async">${b.besiegt ? '<span class="boss-ko" aria-hidden="true">K.O.!</span>' : ''}</div>
     <p class="boss-spruch">„${esc(b.spruch)}“</p>
     <div class="ziel-zeile"><span>❤️ HP</span><b>${fmtZahl(b.rest)} <small>/ ${fmtZahl(b.hp)}</small></b></div>
-    ${balken(b.rest, b.hp, 'hp', 'Boss-Lebenspunkte')}
-    <p class="muted klein">${b.besiegt ? '🏆 BESIEGT! +300 XP eingesackt.' : `Jede Mahlzeit macht Schaden in Höhe ihrer kcal. Schon ${fmtZahl(b.schaden)} Schaden!`}</p>
+    ${balken(b.rest, b.hp, 'hp', 'Boss-Lebenspunkte', 'boss-' + w.id)}
+    <p class="muted klein">${b.besiegt ? '🏆 Besiegt! +300 XP eingesackt.' : `Jede Mahlzeit macht Schaden in Höhe ihrer kcal. Schon ${fmtZahl(b.schaden)} Schaden!`}</p>
   </section>`;
   html += `<section class="panel">
     <h3 class="titel-klein">📊 ${fmtTag(w.start)} – ${fmtTag(ende)}</h3>
@@ -3444,7 +3572,7 @@ function renderWoche() {
     return `<section class="panel tag-karte ${t.datum === h ? 'heute' : ''} ${t.datum < h ? 'vorbei' : ''}">
       <header class="tag-karte-kopf"><b>${fmtTag(t.datum)}</b>
         ${t.datum === h ? '<span class="tag tag-heute">HEUTE</span>' : ''}${ti === 0 ? '<span class="tag">🛒 Einkauf</span>' : ''}${t.chill ? '<span class="tag tag-chill">😎 Chill</span>' : ''}
-        <span class="tag-karte-werte">${fmtZahl(at.kcal)} kcal · ${fmtZahl(at.protein)} g${gegessen ? ` · ✓ ${gegessen}/5` : ''}</span></header>
+        <span class="tag-karte-werte"><span>${fmtZahl(at.kcal)} kcal</span><span>${fmtZahl(at.protein)} g</span>${gegessen ? `<span>✓ ${gegessen}/5</span>` : ''}</span></header>
       <ul class="tag-mahlzeiten">${t.slots.map((s, si) => {
         const r = rezeptVon(s.rid, s.mild), inf = A.slotInfo[ti][si];
         return `<li><button class="tag-mz ${s.gegessen ? 'gegessen' : ''}" data-a="rezept" data-rid="${r.id}" data-mild="${s.mild ? 1 : 0}" data-w="${wi}" data-t="${ti}" data-s="${si}">
@@ -3503,7 +3631,7 @@ function renderEinkauf() {
         <input type="checkbox" data-a="einkauf-check" data-w="${wi}" data-id="${i.id}" ${an ? 'checked' : ''} ${i.packs === 0 ? 'disabled' : ''}>
         <span class="check-box" aria-hidden="true"></span>
         <span class="check-text"><b>${esc(z.name)}</b>
-          <span class="muted klein">${i.packs > 0 ? `${i.packs} × ${fmtNurMenge(i.id, z.packung)}` : 'nichts kaufen'} · brauchst ${fmtNurMenge(i.id, i.menge)}${i.bestand > 0 ? ` · ♻️ ${fmtNurMenge(i.id, i.bestand)} noch da` : ''}</span>
+          <span class="muted klein">${i.packs > 0 ? `${i.packs} × ${fmtNurMenge(i.id, z.packung)}` : 'nichts kaufen'}, brauchst ${fmtNurMenge(i.id, i.menge)}${i.bestand > 0 ? ` · ♻️ ${fmtNurMenge(i.id, i.bestand)} noch da` : ''}</span>
           <span>${bis}${i.angebot ? '<span class="tag tag-angebot">🏷️ Angebot</span>' : ''}</span></span>
         <span class="check-preis">${i.packs > 0 ? fmtEuro(i.preis) : ''}</span></label></li>`;
     }).join('')}</ul></section>`;
@@ -3515,7 +3643,7 @@ function renderEinkauf() {
         const z = ZUTAT[v.id], da = !!e.vorratDa[v.id];
         return `<li><label class="check ${da ? 'an' : ''}"><input type="checkbox" data-a="vorrat-check" data-w="${wi}" data-id="${v.id}" ${da ? 'checked' : ''}>
           <span class="check-box" aria-hidden="true"></span>
-          <span class="check-text"><b>${esc(z.name)}</b><span class="muted klein">brauchst ${fmtNurMenge(v.id, v.menge)} · ${da ? '✓ hab ich noch' : `kaufen: ${v.packs} × ${fmtNurMenge(v.id, z.packung)}`}</span></span>
+          <span class="check-text"><b>${esc(z.name)}</b><span class="muted klein">brauchst ${fmtNurMenge(v.id, v.menge)}, ${da ? '✓ hab ich noch' : `kaufen: ${v.packs} × ${fmtNurMenge(v.id, z.packung)}`}</span></span>
           <span class="check-preis">${da ? '' : fmtEuro(v.packs * v.preisPack)}</span></label></li>`;
       }).join('')}</ul></section>`;
   }
@@ -3560,7 +3688,7 @@ function rezeptKarte(r) {
     <span class="rk-emoji" aria-hidden="true">${r.emoji}</span>
     <span class="rk-text"><b>${esc(r.name)}${fav ? ' ⭐' : ''}</b>
       <span class="mz-meta"><span>🔥 ${r.kcal}</span><span>💪 ${fmtZahl(r.protein)} g</span><span>⏱ ${r.zeitMin}′</span><span>${AUFWAND_ICON[r.aufwand]}</span><span>💶 ${fmtEuro(r.kosten)}</span></span>
-      <span class="rk-tags">${KUECHEN[r.kueche].emoji} ${KUECHEN[r.kueche].name}${r.magenschonend ? ' · 🫶' : ''}${r.mealPrepPortionen > 1 ? ' · 📦 Meal-Prep' : ''}${r.fancy ? ' · ✨' : ''}${r.schaerfe ? ' · ' + schaerfeIcon(r.schaerfe) : ''}</span></span></button></li>`;
+      <span class="rk-tags"><span>${KUECHEN[r.kueche].emoji} ${KUECHEN[r.kueche].name}</span>${r.magenschonend ? '<span>🫶 magenschonend</span>' : ''}${r.mealPrepPortionen > 1 ? '<span>📦 Meal-Prep</span>' : ''}${r.fancy ? '<span>✨ fancy</span>' : ''}${r.schaerfe ? '<span>' + schaerfeIcon(r.schaerfe) + '</span>' : ''}</span></span></button></li>`;
 }
 function renderRezepte() {
   const liste = rezeptGefiltert(), n = anzahlFilter();
@@ -3625,7 +3753,7 @@ function rezeptSheet(rid, mild, ctx) {
   } else zut += zutatenListe(v.eigeneZut);
   const schritte = v.rest && !r.basisId ? [] : v.sichtbareSchritte;
   return `<div class="rezept-kopf"><span class="rezept-emoji" aria-hidden="true">${r.emoji}</span>
-      <div><h2 class="titel">${esc(r.name)}</h2><p class="muted klein">${KUECHEN[r.kueche].emoji} ${KUECHEN[r.kueche].name} · ${MAHLZEIT_NAMEN[r.mahlzeit]}${r.variante ? ' · Variante ' + esc(r.variante) : ''}</p></div>
+      <div><h2 class="titel">${esc(r.name)}</h2><p class="muted klein rezept-unter"><span>${KUECHEN[r.kueche].emoji} ${KUECHEN[r.kueche].name}</span><span>${MAHLZEIT_NAMEN[r.mahlzeit]}</span>${r.variante ? '<span>Variante ' + esc(r.variante) + '</span>' : ''}</p></div>
       <button class="btn-fav ${fav ? 'an' : ''}" data-a="fav" data-rid="${r.id}" aria-pressed="${fav}" aria-label="Favorit">${fav ? '⭐' : '☆'}</button></div>
     <div class="chips">${r.fancy ? '<span class="chip">✨ Fancy</span>' : ''}${r.premium ? '<span class="chip">⭐ Premium</span>' : ''}${r.magenschonend ? '<span class="chip">🫶 magenschonend</span>' : ''}${r.mealPrepPortionen > 1 ? `<span class="chip">📦 Meal-Prep bis ${r.mealPrepPortionen} Portionen</span>` : ''}${r.istMild ? '<span class="chip">🧊 Mild-Version</span>' : ''}${r.reiz.includes('saeure') ? '<span class="chip">🍅 etwas säurehaltig</span>' : ''}${r.fettig ? '<span class="chip">🧈 eher deftig</span>' : ''}</div>
     <div class="stat-grid sechs">
@@ -3661,7 +3789,7 @@ function renderKochmodus() {
     <div class="koch-fortschritt">${schritte.map((_, j) => `<i class="${j < i ? 'fertig' : j === i ? 'aktiv' : ''}"></i>`).join('')}</div>
     <main class="koch-inhalt">${fertig
       ? `${maskottchen('stolz', 'gross')}<p class="koch-schritt">Fertig! Guten Appetit – Itadakimasu! 🎉</p>`
-      : `<p class="koch-nr">Schritt ${i + 1} von ${schritte.length}${schritte[i].basis ? ' · Basis' : ''}</p><p class="koch-schritt">${esc(schritte[i].text)}</p>`}
+      : `<p class="koch-nr">Schritt ${i + 1} von ${schritte.length}${schritte[i].basis ? ' (Basis)' : ''}</p><p class="koch-schritt">${esc(schritte[i].text)}</p>`}
       <details class="koch-zutaten"><summary>🧺 Zutaten anzeigen</summary>${zutatenListe(v.basisZut.concat(v.eigeneZut))}</details>
       <p class="muted klein">${UI.wakeLock ? '🔆 Bildschirm bleibt an.' : 'Tipp: Bildschirm-Sperre ggf. selbst verlängern.'}</p></main>
     <footer class="koch-fuss"><button class="btn btn-ghost btn-gross" data-a="koch-zurueck" ${i === 0 ? 'disabled' : ''}>◀ Zurück</button>
@@ -3711,15 +3839,15 @@ function zeigeOverlay(html, klasse) {
 function levelUpOverlay(level) {
   const r = rangFuer(level), alterRang = rangFuer(level - 1);
   setzeSpruch('levelup');
-  zeigeOverlay(`${maskottchen('stolz', 'gross')}<p class="overlay-gross">LEVEL UP!</p><p class="overlay-level">Level ${level}</p>
-    <p class="overlay-text">${r.name !== alterRang.name ? `Neuer Rang: <b>${r.emoji} ${r.name}</b>!` : `${r.emoji} ${r.name}`}</p><p class="overlay-text klein">${esc(UI.spruch.text)}</p>`, 'levelup');
+  zeigeOverlay(`<div class="aura">${maskottchen('levelup', 'gross')}</div><p class="overlay-gross">LEVEL UP!!</p><p class="overlay-kana" aria-hidden="true">レベルアップ</p><p class="overlay-level">Level ${level}</p>
+    <p class="overlay-text">${r.name !== alterRang.name ? `Neuer Rang: <b>${r.emoji} ${r.name}</b>!` : `${r.emoji} ${r.name}`}</p><p class="overlay-text klein">${esc(UI.spruch.text)}</p>`, 'levelup verwandlung');
 }
 function bossOverlay(w) {
   const b = BOSSE[w.boss % BOSSE.length];
-  zeigeOverlay(`<div class="boss-emoji riesig">${b.emoji}</div><p class="overlay-gross">BOSS BESIEGT!</p><p class="overlay-text"><b>${esc(b.name)}</b> ist satt und geschlagen. +300 XP!</p>`, 'boss');
+  zeigeOverlay(`<img class="boss-overlay-bild" src="${bossBild(w)}" alt="${esc(b.name)}" width="380" height="380"><p class="overlay-gross">BOSS BESIEGT!</p><p class="overlay-kana" aria-hidden="true">ゲキハ！</p><p class="overlay-text"><b>${esc(b.name)}</b> ist weggemampft. +300 XP!</p>`, 'boss');
 }
 function meilensteinOverlay(m) {
-  zeigeOverlay(`${maskottchen('wow', 'gross')}<p class="overlay-gross">+${fmtZahl(m, m % 1 ? 1 : 0)} KG!</p><p class="overlay-text">Meilenstein geknackt! Du bist ${fmtZahl(m, m % 1 ? 1 : 0)} kg schwerer als beim Start. Sugoi!</p>`, 'meilenstein');
+  zeigeOverlay(`<div class="aura">${maskottchen('stolz', 'gross')}</div><p class="overlay-gross">+${fmtZahl(m, m % 1 ? 1 : 0)} KG!</p><p class="overlay-kana" aria-hidden="true">パワーアップ</p><p class="overlay-text">Meilenstein geknackt! Du bist ${fmtZahl(m, m % 1 ? 1 : 0)} kg schwerer als beim Start. Sugoi!</p>`, 'meilenstein');
 }
 
 /* ---------- Tauschen-Sheet ---------- */
@@ -3944,7 +4072,7 @@ function renderProfil() {
   return `<section class="panel rang-karte speed">
       ${maskottchen('stolz', 'mittel')}
       <div><small>LEVEL</small><p class="rang-level">${SP.level}</p><b>${SP.rang.emoji} ${SP.rang.name}</b>
-        ${balken(lvlP * 100, 100, 'xp')}<small>${fmtZahl(SP.xp)} XP gesamt · noch ${fmtZahl(SP.levelEnde - SP.xp)} bis Level ${SP.level + 1}</small></div>
+        ${balken(lvlP * 100, 100, 'xp')}<small>${fmtZahl(SP.xp)} XP gesamt</small><br><small>Noch ${fmtZahl(SP.levelEnde - SP.xp)} XP bis Level ${SP.level + 1}</small></div>
     </section>
     <div class="stat-grid">
       <div class="stat"><b>${st.mahlzeiten}</b><span>Mahlzeiten</span></div><div class="stat"><b>${st.zielTage}</b><span>Tage im Ziel</span></div>
@@ -4052,6 +4180,7 @@ const HANDLER = {
       slot.gegessen = !slot.gegessen;
       if (slot.gegessen) {
         vibriere(25);
+        UI.effekt = { karte: `${c.w}-${c.t}-${c.s}`, kcal: slot.kcal };
         const nach = berechneSpielstand(Z).proTag[datum] || {};
         setzeSpruch(nach.zielErreicht && !vorher ? 'ziel' : 'abgehakt');
       } else UI.spruch = { text: 'Rückgängig gemacht – kein Problem, die XP sind wieder abgezogen.', ausdruck: 'besorgt' };

@@ -56,8 +56,19 @@ pruefe(A.ERFOLGE.length >= 25, `mind. 25 Erfolge (${A.ERFOLGE.length})`);
 pruefe(new Set(A.ERFOLGE.map(e => e.id)).size === A.ERFOLGE.length, 'Erfolg-IDs eindeutig');
 pruefe(A.RAENGE.map(r => r.name).join('|') === 'Reiskorn-Rekrut|Ramen-Lehrling|Wok-Krieger|Gyoza-Meister|Bulk-Shogun|Legendärer Küchen-Kaiser', 'Ränge vollständig');
 const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
-const gesichter = (html.match(/const GESICHTER = \{([\s\S]*?)\n\};/) || [, ''])[1].match(/^\s{2}([a-z]+):/gm) || [];
-pruefe(gesichter.length >= 4, `Maskottchen mit mind. 4 Ausdrücken (${gesichter.length})`);
+const wurzel = path.join(__dirname, '..');
+const bilderImCode = [...new Set((html.match(/const MASKOTTCHEN_BILDER = \{([^}]*)\}/) || [, ''])[1].match(/'([a-z]+)'/g) || [])].map(x => x.replace(/'/g, ''));
+pruefe(bilderImCode.length >= 6 && bilderImCode.every(n => fs.existsSync(path.join(wurzel, 'assets/bilder/maskottchen', n + '.webp'))), `Maskottchen: mind. 6 Ausdrücke als Bild vorhanden (${bilderImCode.join(', ')})`);
+pruefe(A.BOSSE.length >= 10 && A.BOSSE.every(b => b.bild && fs.existsSync(path.join(wurzel, 'assets/bilder/bosse', b.bild + '.webp'))), `mind. 10 illustrierte Wochen-Bosse (${A.BOSSE.length})`);
+const swText = fs.readFileSync(path.join(wurzel, 'sw.js'), 'utf8');
+const assetDateien = [];
+(function sammle(d) { for (const f of fs.readdirSync(path.join(wurzel, d))) { const r = d + '/' + f; if (fs.statSync(path.join(wurzel, r)).isDirectory()) sammle(r); else if (!f.endsWith('.txt')) assetDateien.push(r); } })('assets');
+pruefe(assetDateien.every(f => swText.includes("'./" + f + "'")), 'Service Worker cacht alle Bilder & Schriften (offline)', assetDateien.filter(f => !swText.includes("'./" + f + "'")).join(', '));
+const swListe = (swText.match(/const DATEIEN = \[([\s\S]*?)\];/) || [, ''])[1].match(/'\.\/([^']+)'/g) || [];
+pruefe(swListe.every(x => { const f = x.slice(3, -1); return f === '' || fs.existsSync(path.join(wurzel, f)); }), 'alle Dateien der Service-Worker-Liste existieren');
+const bildBytes = assetDateien.filter(f => f.endsWith('.webp')).reduce((s, f) => s + fs.statSync(path.join(wurzel, f)).size, 0);
+pruefe(bildBytes < 900 * 1024, `Bilder zusammen klein genug fürs Handy (${Math.round(bildBytes / 1024)} KB < 900 KB)`);
+pruefe(!/fonts\.googleapis|fonts\.gstatic/.test(html) && fs.existsSync(path.join(wurzel, 'assets/fonts/Bangers-OFL.txt')), 'Schriften lokal mit OFL-Lizenz');
 pruefe(!/https?:\/\/(cdn|fonts|unpkg|cdnjs)/.test(html) && !/<script[^>]+src=/.test(html) && !/<link[^>]+stylesheet/.test(html), 'keine CDNs/externen Skripte/Schriften');
 
 /* ------------------------------------------------------------------ */
