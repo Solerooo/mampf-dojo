@@ -92,7 +92,7 @@ h4 { margin: 12px 0 2px; font-size: 15px; }
 .titel-klein { font-family: var(--font-titel); font-weight: 900; font-size: 15px; text-transform: uppercase; margin: 0 0 8px; letter-spacing: .02em; }
 .titel-klein small { color: var(--muted); font-family: var(--font); }
 .titel-mega {
-  font-family: var(--font-titel); font-size: 44px; font-weight: 900; font-style: italic; text-align: center; margin: 4px 0 12px;
+  font-family: var(--font-titel); font-size: clamp(30px, 10vw, 44px); font-weight: 900; font-style: italic; text-align: center; margin: 4px 0 12px; white-space: nowrap;
   color: var(--gelb); -webkit-text-stroke: 2px var(--ink); text-shadow: 4px 4px 0 var(--ink), 7px 7px 0 var(--pink); transform: rotate(-3deg);
 }
 
@@ -500,7 +500,7 @@ const ABTEILUNGEN = [
 /* ---------------------------------------------------------------------
    ZUTATEN – zentrale Tabelle. Rezeptwerte (kcal, Protein, Kosten) werden
    daraus automatisch berechnet.
-   Z(id, name, abteilung, kcal/100g, Protein g/100g, einheit, packung, preis €,
+   ZT(id, name, abteilung, kcal/100g, Protein g/100g, einheit, packung, preis €,
      haltbarRohTage, extras)
    - einheit 'g' | 'ml' | 'Stk' (bei Stk: stueckG = essbare Gramm pro Stück)
    - packung: übliche Packungsgröße (in der Einheit), preis: Discounter-Preis
@@ -513,7 +513,7 @@ const ABTEILUNGEN = [
    - reiz: 'saeure' | 'scharf' → für den magenschonenden Modus
    - Keine Tiefkühlware (tiefkuehl ist überall false)!
    --------------------------------------------------------------------- */
-function Z(id, name, abteilung, kcal, protein, einheit, packung, preis, haltbarRohTage, extra) {
+function ZT(id, name, abteilung, kcal, protein, einheit, packung, preis, haltbarRohTage, extra) {
   return Object.assign({
     id, name, abteilung, kcal, protein, einheit, packung, preis, haltbarRohTage,
     vorrat: false, premium: false, reiz: null, stueckG: null, stk: null, kurz: null, tiefkuehl: false,
@@ -523,121 +523,121 @@ const VORRAT = { vorrat: true };
 
 const ZUTATEN = [
   // ---------- Fleisch & Fisch (frisch → kurz haltbar) ----------
-  Z('haehnchen',        'Hähnchenbrustfilet',               'fleisch', 110, 23.5, 'g', 600, 5.99, 3, { kurz: 'Hähnchenbrust' }),
-  Z('haehnchenschenkel','Hähnchenschenkelfilet (ohne Haut)', 'fleisch', 130, 19,   'g', 500, 4.99, 3, { kurz: 'Hähnchenschenkel' }),
-  Z('hack',             'Hackfleisch gemischt',              'fleisch', 250, 18,   'g', 500, 4.49, 2, { kurz: 'Hackfleisch' }),
-  Z('steak',            'Rinderhüftsteaks (2 Stück)',        'fleisch', 120, 22,   'g', 300, 6.99, 3, { premium: true, kurz: 'Hüftsteak' }),
-  Z('lachs',            'Lachsfilet, frisch (2 Stück)',      'fleisch', 200, 20,   'g', 250, 4.99, 2, { premium: true, kurz: 'Lachsfilet' }),
-  Z('raeucherlachs',    'Räucherlachs (vakuumiert)',         'fleisch', 180, 21,   'g', 200, 3.99, 10, { premium: true, kurz: 'Räucherlachs' }),
-  Z('salsiccia',        'Salsiccia (frische Bratwurst)',     'fleisch', 280, 15,   'g', 400, 3.79, 4, { kurz: 'Salsiccia' }),
-  Z('speck',            'Speckwürfel (vakuumiert)',          'fleisch', 320, 14,   'g', 150, 1.49, 21, { kurz: 'Speckwürfel' }),
-  Z('kochschinken',     'Kochschinken (Aufschnitt)',         'fleisch', 110, 19,   'g', 200, 1.89, 10, { kurz: 'Kochschinken' }),
+  ZT('haehnchen',        'Hähnchenbrustfilet',               'fleisch', 110, 23.5, 'g', 600, 5.99, 3, { kurz: 'Hähnchenbrust' }),
+  ZT('haehnchenschenkel','Hähnchenschenkelfilet (ohne Haut)', 'fleisch', 130, 19,   'g', 500, 4.99, 3, { kurz: 'Hähnchenschenkel' }),
+  ZT('hack',             'Hackfleisch gemischt',              'fleisch', 250, 18,   'g', 500, 4.49, 2, { kurz: 'Hackfleisch' }),
+  ZT('steak',            'Rinderhüftsteaks (2 Stück)',        'fleisch', 120, 22,   'g', 300, 6.99, 3, { premium: true, kurz: 'Hüftsteak' }),
+  ZT('lachs',            'Lachsfilet, frisch (2 Stück)',      'fleisch', 200, 20,   'g', 250, 4.99, 2, { premium: true, kurz: 'Lachsfilet' }),
+  ZT('raeucherlachs',    'Räucherlachs (vakuumiert)',         'fleisch', 180, 21,   'g', 200, 3.99, 10, { premium: true, kurz: 'Räucherlachs' }),
+  ZT('salsiccia',        'Salsiccia (frische Bratwurst)',     'fleisch', 280, 15,   'g', 400, 3.79, 4, { kurz: 'Salsiccia' }),
+  ZT('speck',            'Speckwürfel (vakuumiert)',          'fleisch', 320, 14,   'g', 150, 1.49, 21, { kurz: 'Speckwürfel' }),
+  ZT('kochschinken',     'Kochschinken (Aufschnitt)',         'fleisch', 110, 19,   'g', 200, 1.89, 10, { kurz: 'Kochschinken' }),
 
   // ---------- Kühlregal & Käse ----------
-  Z('milch',        'H-Vollmilch 3,5 %',              'kuehl', 64,  3.3, 'ml', 1000, 1.05, 60, { kurz: 'Vollmilch' }),
-  Z('skyr',         'Skyr natur',                     'kuehl', 63,  11,  'g', 450, 1.29, 21),
-  Z('quark',        'Magerquark',                     'kuehl', 68,  12,  'g', 500, 1.15, 14),
-  Z('griechjoghurt','Joghurt griechische Art 10 %',   'kuehl', 120, 4.5, 'g', 500, 1.49, 21, { kurz: 'griech. Joghurt' }),
-  Z('sahne',        'Schlagsahne 30 %',               'kuehl', 292, 2.4, 'g', 200, 0.99, 21, { kurz: 'Sahne' }),
-  Z('frischkaese',  'Frischkäse (Doppelrahm)',        'kuehl', 240, 5.5, 'g', 200, 0.99, 21, { kurz: 'Frischkäse' }),
-  Z('butter',       'Butter',                         'kuehl', 741, 0.7, 'g', 250, 2.29, 30, VORRAT),
-  Z('cheddar',      'Cheddar, gerieben',              'kuehl', 405, 25,  'g', 200, 1.99, 28, { kurz: 'Cheddar' }),
-  Z('reibekaese',   'Reibekäse Emmentaler',           'kuehl', 380, 28,  'g', 200, 1.69, 28, { kurz: 'Emmentaler' }),
-  Z('mozzarella',   'Mozzarella',                     'kuehl', 235, 18,  'g', 125, 0.75, 14),
-  Z('parmesan',     'Hartkäse gerieben (Grana Padano)','kuehl', 390, 33, 'g', 100, 1.79, 30, { kurz: 'Parmesan' }),
-  Z('feta',         'Feta',                           'kuehl', 265, 17,  'g', 200, 1.59, 21),
-  Z('eier',         'Eier (Größe M, 10 Stk)',         'kuehl', 155, 13,  'Stk', 10, 2.69, 21, { stueckG: 55, stk: ['Ei', 'Eier'] }),
-  Z('tofu',         'Tofu natur',                     'kuehl', 135, 14.5,'g', 400, 1.99, 21),
-  Z('gnocchi',      'Gnocchi (Kühlregal)',            'kuehl', 155, 3.6, 'g', 500, 1.29, 30, { kurz: 'Gnocchi' }),
-  Z('spaetzle',     'Frische Eierspätzle',            'kuehl', 165, 6,   'g', 500, 1.49, 21, { kurz: 'Spätzle' }),
+  ZT('milch',        'H-Vollmilch 3,5 %',              'kuehl', 64,  3.3, 'ml', 1000, 1.05, 60, { kurz: 'Vollmilch' }),
+  ZT('skyr',         'Skyr natur',                     'kuehl', 63,  11,  'g', 450, 1.29, 21),
+  ZT('quark',        'Magerquark',                     'kuehl', 68,  12,  'g', 500, 1.15, 14),
+  ZT('griechjoghurt','Joghurt griechische Art 10 %',   'kuehl', 120, 4.5, 'g', 500, 1.49, 21, { kurz: 'griech. Joghurt' }),
+  ZT('sahne',        'Schlagsahne 30 %',               'kuehl', 292, 2.4, 'g', 200, 0.99, 21, { kurz: 'Sahne' }),
+  ZT('frischkaese',  'Frischkäse (Doppelrahm)',        'kuehl', 240, 5.5, 'g', 200, 0.99, 21, { kurz: 'Frischkäse' }),
+  ZT('butter',       'Butter',                         'kuehl', 741, 0.7, 'g', 250, 2.29, 30, VORRAT),
+  ZT('cheddar',      'Cheddar, gerieben',              'kuehl', 405, 25,  'g', 200, 1.99, 28, { kurz: 'Cheddar' }),
+  ZT('reibekaese',   'Reibekäse Emmentaler',           'kuehl', 380, 28,  'g', 200, 1.69, 28, { kurz: 'Emmentaler' }),
+  ZT('mozzarella',   'Mozzarella',                     'kuehl', 235, 18,  'g', 125, 0.75, 14),
+  ZT('parmesan',     'Hartkäse gerieben (Grana Padano)','kuehl', 390, 33, 'g', 100, 1.79, 30, { kurz: 'Parmesan' }),
+  ZT('feta',         'Feta',                           'kuehl', 265, 17,  'g', 200, 1.59, 21),
+  ZT('eier',         'Eier (Größe M, 10 Stk)',         'kuehl', 155, 13,  'Stk', 10, 2.69, 21, { stueckG: 55, stk: ['Ei', 'Eier'] }),
+  ZT('tofu',         'Tofu natur',                     'kuehl', 135, 14.5,'g', 400, 1.99, 21),
+  ZT('gnocchi',      'Gnocchi (Kühlregal)',            'kuehl', 155, 3.6, 'g', 500, 1.29, 30, { kurz: 'Gnocchi' }),
+  ZT('spaetzle',     'Frische Eierspätzle',            'kuehl', 165, 6,   'g', 500, 1.49, 21, { kurz: 'Spätzle' }),
 
   // ---------- Brot & Backwaren ----------
-  Z('toast',      'Buttertoast',                      'brot', 265, 8,   'g', 500, 1.09, 7, { kurz: 'Toast' }),
-  Z('brioche',    'Brioche-Scheiben',                 'brot', 355, 8.5, 'g', 500, 2.19, 10, { kurz: 'Brioche' }),
-  Z('wraps',      'Weizen-Tortillas (Wraps, 6 Stk)',  'brot', 305, 8.5, 'Stk', 6, 1.19, 21, { stueckG: 62, stk: ['Wrap', 'Wraps'] }),
-  Z('burgerbuns', 'Brioche-Burger-Buns (4 Stk)',      'brot', 300, 9,   'Stk', 4, 1.49, 7,  { stueckG: 60, stk: ['Burger-Bun', 'Burger-Buns'] }),
-  Z('naan',       'Naan-Brot (2 Stk)',                'brot', 290, 8.5, 'Stk', 2, 1.79, 14, { stueckG: 125, stk: ['Naan', 'Naan'] }),
-  Z('ciabatta',   'Ciabatta-Brötchen zum Aufbacken (4 Stk)', 'brot', 250, 8.5, 'Stk', 4, 1.29, 21, { stueckG: 75, stk: ['Ciabatta-Brötchen', 'Ciabatta-Brötchen'] }),
-  Z('bagel',      'Bagels (4 Stk)',                   'brot', 260, 10,  'Stk', 4, 1.49, 10, { stueckG: 85, stk: ['Bagel', 'Bagels'] }),
+  ZT('toast',      'Buttertoast',                      'brot', 265, 8,   'g', 500, 1.09, 7, { kurz: 'Toast' }),
+  ZT('brioche',    'Brioche-Scheiben',                 'brot', 355, 8.5, 'g', 500, 2.19, 10, { kurz: 'Brioche' }),
+  ZT('wraps',      'Weizen-Tortillas (Wraps, 6 Stk)',  'brot', 305, 8.5, 'Stk', 6, 1.19, 21, { stueckG: 62, stk: ['Wrap', 'Wraps'] }),
+  ZT('burgerbuns', 'Brioche-Burger-Buns (4 Stk)',      'brot', 300, 9,   'Stk', 4, 1.49, 7,  { stueckG: 60, stk: ['Burger-Bun', 'Burger-Buns'] }),
+  ZT('naan',       'Naan-Brot (2 Stk)',                'brot', 290, 8.5, 'Stk', 2, 1.79, 14, { stueckG: 125, stk: ['Naan', 'Naan'] }),
+  ZT('ciabatta',   'Ciabatta-Brötchen zum Aufbacken (4 Stk)', 'brot', 250, 8.5, 'Stk', 4, 1.29, 21, { stueckG: 75, stk: ['Ciabatta-Brötchen', 'Ciabatta-Brötchen'] }),
+  ZT('bagel',      'Bagels (4 Stk)',                   'brot', 260, 10,  'Stk', 4, 1.49, 10, { stueckG: 85, stk: ['Bagel', 'Bagels'] }),
 
   // ---------- Obst & Gemüse ----------
-  Z('banane',           'Bananen (6 Stk)',           'obst', 93,  1.1, 'Stk', 6, 1.49, 6, { stueckG: 120, stk: ['Banane', 'Bananen'] }),
-  Z('himbeeren',        'Himbeeren',                 'obst', 45,  1.2, 'g', 125, 1.89, 2),
-  Z('heidelbeeren',     'Heidelbeeren',              'obst', 57,  0.7, 'g', 200, 2.19, 6),
-  Z('mango',            'Mango, essreif (1 Stk)',    'obst', 62,  0.8, 'g', 300, 1.19, 5, { kurz: 'Mango' }),
-  Z('avocado',          'Avocados (2 Stk)',          'obst', 160, 2,   'Stk', 2, 1.99, 5, { stueckG: 140, stk: ['Avocado', 'Avocados'] }),
-  Z('kartoffeln',       'Kartoffeln, festkochend',   'obst', 77,  2,   'g', 1500, 1.79, 21, { kurz: 'Kartoffeln' }),
-  Z('suesskartoffel',   'Süßkartoffeln',             'obst', 86,  1.6, 'g', 1000, 2.49, 14),
-  Z('zwiebel',          'Zwiebeln',                  'obst', 40,  1.2, 'g', 1000, 1.19, 30, VORRAT),
-  Z('knoblauch',        'Knoblauch',                 'obst', 141, 6,   'g', 150, 0.99, 30, VORRAT),
-  Z('ingwer',           'Ingwer',                    'obst', 80,  1.8, 'g', 150, 0.89, 21, VORRAT),
-  Z('fruehlingszwiebel','Frühlingszwiebeln (Bund)',  'obst', 32,  1.8, 'g', 120, 0.69, 5, { kurz: 'Frühlingszwiebel' }),
-  Z('paprika',          'Paprika rot',               'obst', 31,  1,   'g', 500, 1.99, 10, { kurz: 'Paprika' }),
-  Z('brokkoli',         'Brokkoli',                  'obst', 34,  3,   'g', 500, 1.49, 5),
-  Z('spinat',           'Babyspinat',                'obst', 23,  2.9, 'g', 125, 1.29, 3),
-  Z('karotten',         'Karotten',                  'obst', 39,  0.9, 'g', 1000, 0.99, 21),
-  Z('gurke',            'Salatgurke',                'obst', 15,  0.6, 'g', 400, 0.69, 7, { kurz: 'Gurke' }),
-  Z('cherrytomaten',    'Cherrytomaten',             'obst', 20,  0.9, 'g', 250, 1.29, 7, { reiz: 'saeure' }),
-  Z('champignons',      'Champignons',               'obst', 22,  3.1, 'g', 250, 1.29, 4),
-  Z('zucchini',         'Zucchini',                  'obst', 18,  1.2, 'g', 500, 1.29, 7),
-  Z('salat',            'Romana-Salatherzen',        'obst', 17,  1.2, 'g', 300, 1.49, 4, { kurz: 'Romanasalat' }),
+  ZT('banane',           'Bananen (6 Stk)',           'obst', 93,  1.1, 'Stk', 6, 1.49, 6, { stueckG: 120, stk: ['Banane', 'Bananen'] }),
+  ZT('himbeeren',        'Himbeeren',                 'obst', 45,  1.2, 'g', 125, 1.89, 2),
+  ZT('heidelbeeren',     'Heidelbeeren',              'obst', 57,  0.7, 'g', 200, 2.19, 6),
+  ZT('mango',            'Mango, essreif (1 Stk)',    'obst', 62,  0.8, 'g', 300, 1.19, 5, { kurz: 'Mango' }),
+  ZT('avocado',          'Avocados (2 Stk)',          'obst', 160, 2,   'Stk', 2, 1.99, 5, { stueckG: 140, stk: ['Avocado', 'Avocados'] }),
+  ZT('kartoffeln',       'Kartoffeln, festkochend',   'obst', 77,  2,   'g', 1500, 1.79, 21, { kurz: 'Kartoffeln' }),
+  ZT('suesskartoffel',   'Süßkartoffeln',             'obst', 86,  1.6, 'g', 1000, 2.49, 14),
+  ZT('zwiebel',          'Zwiebeln',                  'obst', 40,  1.2, 'g', 1000, 1.19, 30, VORRAT),
+  ZT('knoblauch',        'Knoblauch',                 'obst', 141, 6,   'g', 150, 0.99, 30, VORRAT),
+  ZT('ingwer',           'Ingwer',                    'obst', 80,  1.8, 'g', 150, 0.89, 21, VORRAT),
+  ZT('fruehlingszwiebel','Frühlingszwiebeln (Bund)',  'obst', 32,  1.8, 'g', 120, 0.69, 5, { kurz: 'Frühlingszwiebel' }),
+  ZT('paprika',          'Paprika rot',               'obst', 31,  1,   'g', 500, 1.99, 10, { kurz: 'Paprika' }),
+  ZT('brokkoli',         'Brokkoli',                  'obst', 34,  3,   'g', 500, 1.49, 5),
+  ZT('spinat',           'Babyspinat',                'obst', 23,  2.9, 'g', 125, 1.29, 3),
+  ZT('karotten',         'Karotten',                  'obst', 39,  0.9, 'g', 1000, 0.99, 21),
+  ZT('gurke',            'Salatgurke',                'obst', 15,  0.6, 'g', 400, 0.69, 7, { kurz: 'Gurke' }),
+  ZT('cherrytomaten',    'Cherrytomaten',             'obst', 20,  0.9, 'g', 250, 1.29, 7, { reiz: 'saeure' }),
+  ZT('champignons',      'Champignons',               'obst', 22,  3.1, 'g', 250, 1.29, 4),
+  ZT('zucchini',         'Zucchini',                  'obst', 18,  1.2, 'g', 500, 1.29, 7),
+  ZT('salat',            'Romana-Salatherzen',        'obst', 17,  1.2, 'g', 300, 1.49, 4, { kurz: 'Romanasalat' }),
 
   // ---------- Reis, Nudeln & Müsli ----------
-  Z('reis',        'Langkorn- oder Basmatireis',      'trocken', 350, 7,    'g', 1000, 1.79, 365, VORRAT),
-  Z('rundkornreis','Milchreis / Sushi-Reis (Rundkorn)', 'trocken', 350, 6.5, 'g', 1000, 1.79, 365, Object.assign({ kurz: 'Milchreis (Rundkornreis)' }, VORRAT)),
-  Z('expressreis', 'Express-Reis (Mikrowelle, gegart)','trocken', 155, 3.2,  'g', 250, 1.09, 180, { kurz: 'Express-Reis' }),
-  Z('nudeln',      'Nudeln (Penne, Spaghetti, Makkaroni)', 'trocken', 355, 12.5, 'g', 500, 0.79, 365, Object.assign({ kurz: 'Nudeln' }, VORRAT)),
-  Z('haferflocken','Haferflocken (zart)',             'trocken', 372, 13.5, 'g', 500, 0.65, 365, Object.assign({ kurz: 'Haferflocken' }, VORRAT)),
-  Z('granola',     'Knuspermüsli / Granola',          'trocken', 450, 9,    'g', 500, 1.79, 120, Object.assign({ kurz: 'Granola' }, VORRAT)),
+  ZT('reis',        'Langkorn- oder Basmatireis',      'trocken', 350, 7,    'g', 1000, 1.79, 365, VORRAT),
+  ZT('rundkornreis','Milchreis / Sushi-Reis (Rundkorn)', 'trocken', 350, 6.5, 'g', 1000, 1.79, 365, Object.assign({ kurz: 'Milchreis (Rundkornreis)' }, VORRAT)),
+  ZT('expressreis', 'Express-Reis (Mikrowelle, gegart)','trocken', 155, 3.2,  'g', 250, 1.09, 180, { kurz: 'Express-Reis' }),
+  ZT('nudeln',      'Nudeln (Penne, Spaghetti, Makkaroni)', 'trocken', 355, 12.5, 'g', 500, 0.79, 365, Object.assign({ kurz: 'Nudeln' }, VORRAT)),
+  ZT('haferflocken','Haferflocken (zart)',             'trocken', 372, 13.5, 'g', 500, 0.65, 365, Object.assign({ kurz: 'Haferflocken' }, VORRAT)),
+  ZT('granola',     'Knuspermüsli / Granola',          'trocken', 450, 9,    'g', 500, 1.79, 120, Object.assign({ kurz: 'Granola' }, VORRAT)),
 
   // ---------- Konserven, Saucen & Aufstriche ----------
-  Z('thunfisch',    'Thunfisch im eigenen Saft (Dose, abgetropft)', 'konserven', 110, 25, 'g', 150, 1.69, 365, { kurz: 'Thunfisch' }),
-  Z('passata',      'Passierte Tomaten',               'konserven', 36,  1.4, 'g', 500, 0.59, 365, { reiz: 'saeure' }),
-  Z('tomatenmark',  'Tomatenmark',                     'konserven', 90,  4.5, 'g', 200, 0.89, 365, Object.assign({ reiz: 'saeure' }, VORRAT)),
-  Z('mais',         'Mais (Dose, abgetropft)',         'konserven', 82,  2.6, 'g', 285, 0.79, 365, { kurz: 'Mais' }),
-  Z('bohnen',       'Kidneybohnen (Dose, abgetropft)', 'konserven', 105, 7.5, 'g', 250, 0.79, 365, { kurz: 'Kidneybohnen' }),
-  Z('erbsen',       'Erbsen (Glas, abgetropft)',       'konserven', 75,  5,   'g', 280, 0.89, 365, { kurz: 'Erbsen' }),
-  Z('apfelmus',     'Apfelmus (Glas)',                 'konserven', 78,  0.3, 'g', 710, 0.99, 365, { kurz: 'Apfelmus' }),
-  Z('bbqsauce',     'BBQ-Sauce',                       'konserven', 160, 1,   'ml', 500, 1.29, 365, VORRAT),
-  Z('ketchup',      'Tomatenketchup',                  'konserven', 105, 1.2, 'ml', 500, 0.99, 365, Object.assign({ reiz: 'saeure', kurz: 'Ketchup' }, VORRAT)),
-  Z('mayo',         'Mayonnaise',                      'konserven', 680, 1.1, 'ml', 500, 1.29, 365, VORRAT),
-  Z('erdnussbutter','Erdnussbutter (creamy)',          'konserven', 620, 25,  'g', 350, 1.99, 365, Object.assign({ kurz: 'Erdnussbutter' }, VORRAT)),
-  Z('honig',        'Honig',                           'konserven', 310, 0.4, 'g', 500, 3.29, 365, VORRAT),
+  ZT('thunfisch',    'Thunfisch im eigenen Saft (Dose, abgetropft)', 'konserven', 110, 25, 'g', 150, 1.69, 365, { kurz: 'Thunfisch' }),
+  ZT('passata',      'Passierte Tomaten',               'konserven', 36,  1.4, 'g', 500, 0.59, 365, { reiz: 'saeure' }),
+  ZT('tomatenmark',  'Tomatenmark',                     'konserven', 90,  4.5, 'g', 200, 0.89, 365, Object.assign({ reiz: 'saeure' }, VORRAT)),
+  ZT('mais',         'Mais (Dose, abgetropft)',         'konserven', 82,  2.6, 'g', 285, 0.79, 365, { kurz: 'Mais' }),
+  ZT('bohnen',       'Kidneybohnen (Dose, abgetropft)', 'konserven', 105, 7.5, 'g', 250, 0.79, 365, { kurz: 'Kidneybohnen' }),
+  ZT('erbsen',       'Erbsen (Glas, abgetropft)',       'konserven', 75,  5,   'g', 280, 0.89, 365, { kurz: 'Erbsen' }),
+  ZT('apfelmus',     'Apfelmus (Glas)',                 'konserven', 78,  0.3, 'g', 710, 0.99, 365, { kurz: 'Apfelmus' }),
+  ZT('bbqsauce',     'BBQ-Sauce',                       'konserven', 160, 1,   'ml', 500, 1.29, 365, VORRAT),
+  ZT('ketchup',      'Tomatenketchup',                  'konserven', 105, 1.2, 'ml', 500, 0.99, 365, Object.assign({ reiz: 'saeure', kurz: 'Ketchup' }, VORRAT)),
+  ZT('mayo',         'Mayonnaise',                      'konserven', 680, 1.1, 'ml', 500, 1.29, 365, VORRAT),
+  ZT('erdnussbutter','Erdnussbutter (creamy)',          'konserven', 620, 25,  'g', 350, 1.99, 365, Object.assign({ kurz: 'Erdnussbutter' }, VORRAT)),
+  ZT('honig',        'Honig',                           'konserven', 310, 0.4, 'g', 500, 3.29, 365, VORRAT),
 
   // ---------- Asia & International ----------
-  Z('kokosmilch',   'Kokosmilch (Dose)',               'asia', 180, 1.6, 'ml', 400, 1.39, 365, { kurz: 'Kokosmilch' }),
-  Z('sojasauce',    'Sojasauce',                       'asia', 60,  8,   'ml', 250, 1.49, 365, VORRAT),
-  Z('gochujang',    'Gochujang (koreanische Chilipaste)', 'asia', 220, 4, 'g', 200, 2.99, 365, Object.assign({ reiz: 'scharf', kurz: 'Gochujang' }, VORRAT)),
-  Z('teriyaki',     'Teriyaki-Sauce',                  'asia', 100, 4,   'ml', 250, 1.79, 365, VORRAT),
-  Z('sesamoel',     'Sesamöl, geröstet',               'asia', 884, 0,   'ml', 250, 2.99, 365, Object.assign({ kurz: 'Sesamöl' }, VORRAT)),
-  Z('currywuerfel', 'Japanische Curry-Würfel (mild)',  'asia', 510, 6,   'g', 100, 2.99, 365, Object.assign({ kurz: 'jap. Curry-Würfel' }, VORRAT)),
-  Z('nori',         'Nori-Algenblätter (10 Stk)',      'asia', 300, 35,  'g', 25,  1.99, 365, Object.assign({ kurz: 'Nori' }, VORRAT)),
-  Z('mienudeln',    'Mie-Nudeln',                      'asia', 360, 12,  'g', 250, 1.19, 365, VORRAT),
-  Z('reisnudeln',   'Reisnudeln (breit)',              'asia', 360, 6,   'g', 250, 1.49, 365, Object.assign({ kurz: 'Reisnudeln' }, VORRAT)),
+  ZT('kokosmilch',   'Kokosmilch (Dose)',               'asia', 180, 1.6, 'ml', 400, 1.39, 365, { kurz: 'Kokosmilch' }),
+  ZT('sojasauce',    'Sojasauce',                       'asia', 60,  8,   'ml', 250, 1.49, 365, VORRAT),
+  ZT('gochujang',    'Gochujang (koreanische Chilipaste)', 'asia', 220, 4, 'g', 200, 2.99, 365, Object.assign({ reiz: 'scharf', kurz: 'Gochujang' }, VORRAT)),
+  ZT('teriyaki',     'Teriyaki-Sauce',                  'asia', 100, 4,   'ml', 250, 1.79, 365, VORRAT),
+  ZT('sesamoel',     'Sesamöl, geröstet',               'asia', 884, 0,   'ml', 250, 2.99, 365, Object.assign({ kurz: 'Sesamöl' }, VORRAT)),
+  ZT('currywuerfel', 'Japanische Curry-Würfel (mild)',  'asia', 510, 6,   'g', 100, 2.99, 365, Object.assign({ kurz: 'jap. Curry-Würfel' }, VORRAT)),
+  ZT('nori',         'Nori-Algenblätter (10 Stk)',      'asia', 300, 35,  'g', 25,  1.99, 365, Object.assign({ kurz: 'Nori' }, VORRAT)),
+  ZT('mienudeln',    'Mie-Nudeln',                      'asia', 360, 12,  'g', 250, 1.19, 365, VORRAT),
+  ZT('reisnudeln',   'Reisnudeln (breit)',              'asia', 360, 6,   'g', 250, 1.49, 365, Object.assign({ kurz: 'Reisnudeln' }, VORRAT)),
 
   // ---------- Öl, Gewürze & Backen ----------
-  Z('oel',          'Rapsöl',                          'backen', 884, 0,   'ml', 1000, 1.89, 365, VORRAT),
-  Z('olivenoel',    'Olivenöl',                        'backen', 884, 0,   'ml', 500, 4.99, 365, VORRAT),
-  Z('mehl',         'Weizenmehl',                      'backen', 340, 10,  'g', 1000, 0.59, 365, VORRAT),
-  Z('zucker',       'Zucker',                          'backen', 400, 0,   'g', 1000, 0.99, 365, VORRAT),
-  Z('backpulver',   'Backpulver',                      'backen', 100, 0,   'g', 75,   0.49, 365, VORRAT),
-  Z('staerke',      'Speisestärke',                    'backen', 350, 0.4, 'g', 400,  0.79, 365, VORRAT),
-  Z('kakao',        'Backkakao',                       'backen', 355, 20,  'g', 125,  1.79, 365, VORRAT),
-  Z('sesam',        'Sesam',                           'backen', 580, 18,  'g', 100,  0.99, 365, VORRAT),
-  Z('zimt',         'Zimt',                            'backen', 250, 4,   'g', 40,   0.99, 365, VORRAT),
-  Z('paprikapulver','Paprikapulver edelsüß',           'backen', 300, 14,  'g', 50,   0.89, 365, VORRAT),
-  Z('currypulver',  'Currypulver (mild)',              'backen', 320, 13,  'g', 50,   0.99, 365, VORRAT),
-  Z('garam',        'Garam Masala',                    'backen', 380, 15,  'g', 40,   1.29, 365, VORRAT),
-  Z('kreuzkuemmel', 'Kreuzkümmel, gemahlen',           'backen', 375, 18,  'g', 40,   1.19, 365, Object.assign({ kurz: 'Kreuzkümmel' }, VORRAT)),
-  Z('gyrosgewuerz', 'Gyros-Gewürz (mild)',             'backen', 300, 10,  'g', 50,   0.99, 365, Object.assign({ kurz: 'Gyros-Gewürz' }, VORRAT)),
-  Z('chiliflocken', 'Chiliflocken',                    'backen', 320, 12,  'g', 30,   0.99, 365, Object.assign({ reiz: 'scharf' }, VORRAT)),
-  Z('bruehe',       'Gemüsebrühe (instant)',           'backen', 200, 6,   'g', 250,  1.19, 365, Object.assign({ kurz: 'Gemüsebrühe' }, VORRAT)),
+  ZT('oel',          'Rapsöl',                          'backen', 884, 0,   'ml', 1000, 1.89, 365, VORRAT),
+  ZT('olivenoel',    'Olivenöl',                        'backen', 884, 0,   'ml', 500, 4.99, 365, VORRAT),
+  ZT('mehl',         'Weizenmehl',                      'backen', 340, 10,  'g', 1000, 0.59, 365, VORRAT),
+  ZT('zucker',       'Zucker',                          'backen', 400, 0,   'g', 1000, 0.99, 365, VORRAT),
+  ZT('backpulver',   'Backpulver',                      'backen', 100, 0,   'g', 75,   0.49, 365, VORRAT),
+  ZT('staerke',      'Speisestärke',                    'backen', 350, 0.4, 'g', 400,  0.79, 365, VORRAT),
+  ZT('kakao',        'Backkakao',                       'backen', 355, 20,  'g', 125,  1.79, 365, VORRAT),
+  ZT('sesam',        'Sesam',                           'backen', 580, 18,  'g', 100,  0.99, 365, VORRAT),
+  ZT('zimt',         'Zimt',                            'backen', 250, 4,   'g', 40,   0.99, 365, VORRAT),
+  ZT('paprikapulver','Paprikapulver edelsüß',           'backen', 300, 14,  'g', 50,   0.89, 365, VORRAT),
+  ZT('currypulver',  'Currypulver (mild)',              'backen', 320, 13,  'g', 50,   0.99, 365, VORRAT),
+  ZT('garam',        'Garam Masala',                    'backen', 380, 15,  'g', 40,   1.29, 365, VORRAT),
+  ZT('kreuzkuemmel', 'Kreuzkümmel, gemahlen',           'backen', 375, 18,  'g', 40,   1.19, 365, Object.assign({ kurz: 'Kreuzkümmel' }, VORRAT)),
+  ZT('gyrosgewuerz', 'Gyros-Gewürz (mild)',             'backen', 300, 10,  'g', 50,   0.99, 365, Object.assign({ kurz: 'Gyros-Gewürz' }, VORRAT)),
+  ZT('chiliflocken', 'Chiliflocken',                    'backen', 320, 12,  'g', 30,   0.99, 365, Object.assign({ reiz: 'scharf' }, VORRAT)),
+  ZT('bruehe',       'Gemüsebrühe (instant)',           'backen', 200, 6,   'g', 250,  1.19, 365, Object.assign({ kurz: 'Gemüsebrühe' }, VORRAT)),
 
   // ---------- Nüsse & Süßes ----------
-  Z('mandeln',      'Mandeln',                         'snacks', 600, 22,  'g', 200, 2.49, 180, VORRAT),
-  Z('cashews',      'Cashewkerne',                     'snacks', 590, 18,  'g', 200, 2.99, 180, VORRAT),
-  Z('datteln',      'Datteln, entsteint',              'snacks', 290, 2.5, 'g', 200, 1.99, 180, Object.assign({ kurz: 'Datteln' }, VORRAT)),
-  Z('schokolade',   'Zartbitterschokolade',            'snacks', 540, 7,   'g', 100, 1.29, 180, Object.assign({ kurz: 'Zartbitterschoki' }, VORRAT)),
+  ZT('mandeln',      'Mandeln',                         'snacks', 600, 22,  'g', 200, 2.49, 180, VORRAT),
+  ZT('cashews',      'Cashewkerne',                     'snacks', 590, 18,  'g', 200, 2.99, 180, VORRAT),
+  ZT('datteln',      'Datteln, entsteint',              'snacks', 290, 2.5, 'g', 200, 1.99, 180, Object.assign({ kurz: 'Datteln' }, VORRAT)),
+  ZT('schokolade',   'Zartbitterschokolade',            'snacks', 540, 7,   'g', 100, 1.29, 180, Object.assign({ kurz: 'Zartbitterschoki' }, VORRAT)),
 ];
 
 /* ---------------------------------------------------------------------
@@ -2207,6 +2207,9 @@ const GEN = {
   tStart: 120, tEnde: 0.4, // Temperatur des Simulated Annealing
   budgetPuffer: 0.6,   // € Sicherheitsabstand zum Wochenbudget
   hartStart: 0.25, hartEnde: 4,
+  vielfaltRezept: 8,   // Bonus pro verschiedenem Gericht in der Woche
+  vielfaltKueche: 6,   // Bonus pro verschiedener Länderküche
+  wiederholung: 20,    // Strafe pro Wiederholung, die KEINE Reste-Portion ist
   // kumulative Wahrscheinlichkeiten der Suchschritte: [austauschen, tauschen, Kette, Reste verwerten, Zutat streichen, (Rest) Premium-Paar]
   zuege: [0.35, 0.5, 0.62, 0.76, 0.88], // Gewicht der Regelverstöße: erst locker erkunden, am Ende streng
 };
@@ -2275,6 +2278,7 @@ function baueKontext(opts) {
       kette: kk, ketteIdx: -1, ketteHaltbar: r.haltbarTage, kettePortionen: r.mealPrepPortionen,
       frischBis, frischBisBasis, reiz: r.reiz.length > 0, premium: r.premium ? 1 : 0,
       mittagPasst: r.mahlzeit !== 'abend', favorit: (opts.favoriten || []).includes(r.id),
+      kuecheIdx: Object.keys(KUECHEN).indexOf(r.kueche),
     };
     kand.push(c); pools[c.typ].push(c.idx);
   }
@@ -2311,7 +2315,7 @@ function baueKontext(opts) {
     nK: ketten.length, nR, chill, zielK: opts.zielKcal, zielP: opts.zielProtein, budget: opts.budget,
     budgetIntern: opts.budget - GEN.budgetPuffer, budgetBasis: 250, budgetProEuro: 250, letzteKosten: 0,
     hartFaktor: GEN.hartEnde, letzteHart: 0, letzteWeich: 0,
-    tot: new Float64Array(ZN), kCook: new Int8Array(ketten.length), kUses: new Int8Array(ketten.length),
+    tot: new Float64Array(ZN), kCook: new Int8Array(ketten.length), kUses: new Int8Array(ketten.length), kuechenZahl: new Uint8Array(Object.keys(KUECHEN).length),
     kTotal: new Int8Array(ketten.length), rCount: new Int8Array(nR),
   };
 }
@@ -2320,7 +2324,8 @@ function baueKontext(opts) {
 function bewertePlan(plan, K) {
   const { kand, tot, kCook, kUses, kTotal, rCount, zielK, zielP } = K;
   tot.fill(0); kCook.fill(-1); kUses.fill(0); kTotal.fill(0); rCount.fill(0);
-  let strafe = 0, hart = 0, premium = 0, reste = 0; // strafe = weiche Kriterien, hart = Regelverstöße
+  let strafe = 0, hart = 0, premium = 0, reste = 0, restSelbes = 0; // strafe = weiche Kriterien, hart = Regelverstöße
+  K.kuechenZahl.fill(0);
   for (let d = 0; d < 7; d++) {
     let sumK = 0, sumP = 0;
     for (let s = 0; s < 5; s++) { const c = kand[plan[d * 5 + s]]; sumK += c.kcal; sumP += c.protein; }
@@ -2342,7 +2347,7 @@ function bewertePlan(plan, K) {
       let rest = false, kochTag = d;
       if (c.ketteIdx >= 0) {
         const k = c.ketteIdx;
-        if (kCook[k] >= 0 && d - kCook[k] < c.ketteHaltbar && kUses[k] < c.kettePortionen) { rest = true; kochTag = kCook[k]; kUses[k]++; reste++; }
+        if (kCook[k] >= 0 && d - kCook[k] < c.ketteHaltbar && kUses[k] < c.kettePortionen) { rest = true; kochTag = kCook[k]; kUses[k]++; reste++; restSelbes += rCount[c.ridIdx] > 0 ? 1 : 0; }
         else { kCook[k] = d; kUses[k] = 1; }
         kTotal[k]++;
       }
@@ -2354,13 +2359,18 @@ function bewertePlan(plan, K) {
       const ing = c.ing, amt = c.amt;
       for (let j = 0; j < ing.length; j++) tot[ing[j]] += amt[j] * skala;
       rCount[c.ridIdx]++;
+      if (c.kuecheIdx >= 0) K.kuechenZahl[c.kuecheIdx] = 1;
       if (c.reiz) reiz++;
       premium += c.premium;
       if (c.favorit) strafe -= 4;
     }
     if (K.p.magenModus === 'sparsam' && reiz > 1) hart += 250 * (reiz - 1);
   }
-  for (let r = 0; r < K.nR; r++) { const n = rCount[r]; if (n > 3) hart += 500 * (n - 3); else if (n > 1) strafe += 12 * (n - 1); }
+  let verschieden = 0, wiederholt = 0;
+  for (let r = 0; r < K.nR; r++) { const n = rCount[r]; if (n > 0) verschieden++; if (n > 3) hart += 500 * (n - 3); else if (n > 1) wiederholt += n - 1; }
+  let kuechen = 0;
+  for (let i = 0; i < K.kuechenZahl.length; i++) kuechen += K.kuechenZahl[i];
+  strafe += GEN.wiederholung * Math.max(0, wiederholt - restSelbes) - GEN.vielfaltRezept * verschieden - GEN.vielfaltKueche * kuechen;
   for (let k = 0; k < K.nK; k++) if (kTotal[k] > 3) hart += 500 * (kTotal[k] - 3);
   strafe -= 18 * reste; // Reste sparen Kochen & Abwasch
   if (premium < 2) strafe += GEN.premiumStrafe * (2 - premium); else if (premium > 3) strafe += GEN.premiumStrafe * (premium - 3);
@@ -2733,17 +2743,23 @@ function ersatzKandidaten(z, wi, ti, si, modus) {
     if ((modus === 'keinbock' || tag.chill) && inf.aufwand > 1) continue;
     if ((A.rCount[r.id] || 0) > 3) continue;
     if (A.frisch.some(f => f.ti === ti && f.si === si)) continue;
+    // fehlt = Menge reicht nicht; nichtGekauft = Zutat steht gar nicht auf der Einkaufsliste
     const fehlt = [];
+    let nichtGekauft = 0;
     for (const zt of r.zutaten) {
       const d = ZUTAT[zt.id];
       if (d.vorrat || fehlt.some(f => f.id === zt.id)) continue;
       const hat = verf[zt.id] || 0, braucht = A.bedarf[zt.id] || 0;
-      if (braucht > hat + Math.max(1, 0.03 * d.packung)) fehlt.push({ id: zt.id, menge: braucht - hat });
+      if (braucht > hat + Math.max(1, 0.03 * d.packung)) {
+        fehlt.push({ id: zt.id, menge: braucht - hat, nichtGekauft: hat === 0 });
+        if (hat === 0) nichtGekauft++;
+      }
     }
     const kosten = r.kostenExakt * ns.skala;
     const score = Math.abs(ns.kcal - slot.kcal) / 40 + Math.abs(kosten - altKosten) * 1.5
-      + Math.max(0, slot.protein - ns.protein) / 4 + (modus === 'keinbock' ? inf.aufwand * 2 : 0) + fehlt.length * 50;
-    liste.push({ r, mild: e.mild, slot: ns, fehlt, kosten, aufwand: inf.aufwand, rest: inf.rest, score });
+      + Math.max(0, slot.protein - ns.protein) / 4 + (modus === 'keinbock' ? inf.aufwand * 2 : 0)
+      + fehlt.length * 25 + nichtGekauft * 200;
+    liste.push({ r, mild: e.mild, slot: ns, fehlt, nichtGekauft, kosten, aufwand: inf.aufwand, rest: inf.rest, score });
   }
   liste.sort((a, b) => a.score - b.score);
   return liste;
@@ -2764,11 +2780,12 @@ function tauscheTag(z, wi, ti, modus) {
     if (passt) { erg.behalten++; continue; }
     const kand = ersatzKandidaten(z, wi, ti, si, modus);
     let wahl;
+    const aufListe = k => k.nichtGekauft === 0;
     if (modus === 'keinbock') {
       wahl = kand.find(k => k.fehlt.length === 0 && k.aufwand === 0);
-      if (!wahl && inf.aufwand > 1) wahl = kand.find(k => k.fehlt.length === 0) || kand[0];
+      if (!wahl && inf.aufwand > 1) wahl = kand.find(k => k.fehlt.length === 0) || kand.find(aufListe) || kand[0];
     } else {
-      wahl = kand.find(k => k.fehlt.length === 0) || kand[0];
+      wahl = kand.find(k => k.fehlt.length === 0) || kand.find(aufListe) || kand[0];
     }
     if (!wahl) { erg.behalten++; continue; }
     tauscheSlot(z, wi, ti, si, wahl, modus);
@@ -3676,11 +3693,14 @@ function meilensteinOverlay(m) {
 function tauschSheet(wi, ti, si) {
   const w = Z.wochen[wi], slot = w.tage[ti].slots[si], r = rezeptVon(slot.rid, slot.mild);
   const kand = ersatzKandidaten(Z, wi, ti, si, 'tausch');
-  const ok = kand.filter(k => !k.fehlt.length).slice(0, 8);
+  const voll = kand.filter(k => !k.fehlt.length).slice(0, 8);
+  const knapp = kand.filter(k => k.fehlt.length && !k.nichtGekauft).slice(0, Math.max(3, 8 - voll.length));
+  const ok = voll.concat(knapp);
   UI.tauschKandidaten = { wi, ti, si, liste: ok };
   return `<h2 class="titel">🔄 Tauschen</h2><p class="muted">Statt <b>${r.emoji} ${esc(r.name)}</b> (${fmtZahl(slot.kcal)} kcal) – nur mit Zutaten aus deinem Wocheneinkauf, ähnliche kcal & Kosten:</p>
     ${ok.length ? `<ul class="tausch-liste">${ok.map((k, i) => `<li><button class="tausch-btn panel" data-a="tausch-wahl" data-i="${i}">
-      <span class="rk-emoji">${k.r.emoji}</span><span class="rk-text"><b>${esc(k.r.name)}</b><span class="mz-meta"><span>🔥 ${k.slot.kcal}</span><span>💪 ${fmtZahl(k.slot.protein)} g</span><span>💶 ${fmtEuro(k.kosten)}</span><span>${AUFWAND_ICON[k.aufwand]}${k.rest ? ' ♻️' : ''}</span></span></span></button></li>`).join('')}</ul>`
+      <span class="rk-emoji">${k.r.emoji}</span><span class="rk-text"><b>${esc(k.r.name)}</b><span class="mz-meta"><span>🔥 ${k.slot.kcal}</span><span>💪 ${fmtZahl(k.slot.protein)} g</span><span>💶 ${fmtEuro(k.kosten)}</span><span>${AUFWAND_ICON[k.aufwand]}${k.rest ? ' ♻️' : ''}</span></span>
+      ${k.fehlt.length ? `<span class="rk-tags">⚠️ knapp: ${k.fehlt.map(f => esc(ZUTAT[f.id].kurz || ZUTAT[f.id].name)).join(', ')} – evtl. kurz nachkaufen</span>` : '<span class="rk-tags">✅ alles im Einkauf</span>'}</span></button></li>`).join('')}</ul>`
       : `<div class="leer">${maskottchen('besorgt', 'mittel')}<p>Mit deinem Einkauf passt gerade nichts anderes. Morgen vielleicht?</p></div>`}`;
 }
 

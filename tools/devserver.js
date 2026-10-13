@@ -7,6 +7,7 @@ const fs = require('fs');
 const path = require('path');
 const WURZEL = path.join(__dirname, '..');
 const PORT = +process.argv[2] || 8777;
+let swVersion = null;
 const TYPEN = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.json': 'application/json', '.webmanifest': 'application/manifest+json', '.svg': 'image/svg+xml', '.png': 'image/png', '.css': 'text/css' };
 
 http.createServer((req, res) => {
@@ -19,12 +20,15 @@ http.createServer((req, res) => {
     req.on('end', () => { fs.writeFileSync(path.join(WURZEL, datei), Buffer.concat(teile)); res.writeHead(200); res.end('ok'); console.log('gespeichert', datei); });
     return;
   }
+  // Nur für den Update-Test: Service-Worker-Version im Speicher überschreiben (Datei bleibt unverändert)
+  if (req.method === 'POST' && url.pathname === '/__sw-version') { swVersion = url.searchParams.get('v') || null; res.writeHead(200); return res.end('ok'); }
   let p = decodeURIComponent(url.pathname);
   if (p.endsWith('/')) p += 'index.html';
   const voll = path.normalize(path.join(WURZEL, p));
   if (!voll.startsWith(WURZEL)) { res.writeHead(403); return res.end(); }
   fs.readFile(voll, (fehler, daten) => {
     if (fehler) { res.writeHead(404); return res.end('nicht gefunden'); }
+    if (swVersion && p === '/sw.js') daten = Buffer.from(String(daten).replace(/const VERSION = '[^']+'/, `const VERSION = '${swVersion}'`));
     res.writeHead(200, { 'Content-Type': TYPEN[path.extname(voll)] || 'application/octet-stream', 'Cache-Control': 'no-cache' });
     res.end(daten);
   });
