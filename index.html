@@ -485,7 +485,7 @@ input[type=range] { width: 100%; accent-color: var(--pink); min-height: 44px; }
 /* ---------------------------------------------------------------------
    App-Version: Bei JEDER Änderung hier UND in sw.js (VERSION) erhöhen!
    --------------------------------------------------------------------- */
-const APP_VERSION = '1.0.0';
+const APP_VERSION = '1.0.1';
 
 /* Supermarkt-Abteilungen in Lauf-Reihenfolge (Einkaufsliste wird so sortiert) */
 const ABTEILUNGEN = [
@@ -1736,11 +1736,11 @@ const SPRUECHE = {
 
 /* Prospekt-Links (in den Einstellungen änderbar) */
 const PROSPEKTE_STANDARD = [
-  { id: 'aldi',     name: 'Aldi Süd',  url: 'https://www.aldi-sued.de/de/angebote.html' },
+  { id: 'aldi',     name: 'Aldi Süd',  url: 'https://www.aldi-sued.de/angebote' },
   { id: 'lidl',     name: 'Lidl',      url: 'https://www.lidl.de/c/online-prospekte/s10005610' },
   { id: 'kaufland', name: 'Kaufland',  url: 'https://filiale.kaufland.de/prospekte.html' },
   { id: 'rewe',     name: 'Rewe',      url: 'https://www.rewe.de/angebote/' },
-  { id: 'edeka',    name: 'Edeka',     url: 'https://www.edeka.de/eh/angebote.jsp' },
+  { id: 'edeka',    name: 'Edeka',     url: 'https://www.edeka.de/angebote/' },
   { id: 'netto',    name: 'Netto',     url: 'https://www.netto-online.de/filialangebote' },
 ];
 
@@ -2001,6 +2001,10 @@ function migriere(d) {
   d.zaehler = Object.assign({}, basis.zaehler, d.zaehler);
   d.einstellungen = Object.assign({}, basis.einstellungen, d.einstellungen);
   d.kalibrierung = Object.assign({}, basis.kalibrierung, d.kalibrierung);
+  // Veraltete Standard-Prospektlinks automatisch erneuern (selbst geänderte Links bleiben)
+  const ALTE_LINKS = { 'https://www.aldi-sued.de/de/angebote.html': 'aldi', 'https://www.edeka.de/eh/angebote.jsp': 'edeka' };
+  if (Array.isArray(d.prospekte)) d.prospekte.forEach(x => { const neu = ALTE_LINKS[x.url] && PROSPEKTE_STANDARD.find(p => p.id === ALTE_LINKS[x.url]); if (neu) x.url = neu.url; });
+  else d.prospekte = basis.prospekte;
   // Wochen mit unbekannten Rezepten (z. B. nach Datenbank-Änderung) absichern
   for (const w of d.wochen) for (const t of (w.tage || [])) {
     t.slots = (t.slots || []).filter(s => REZEPT[s.rid]);

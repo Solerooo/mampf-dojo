@@ -281,6 +281,7 @@ const xp = page => page.evaluate(() => berechneSpielstand(Z).xp);
   await foto(page, '18-offline');
   await context.setOffline(false);
 
+  if (!process.env.OHNE_UPDATE) {
   console.log('\n10) Update-Banner');
   await page.request.post(BASIS + '__sw-version?v=9.9.9');
   await page.evaluate(async () => { const r = await navigator.serviceWorker.getRegistration(); await r.update(); });
@@ -294,6 +295,7 @@ const xp = page => page.evaluate(() => berechneSpielstand(Z).xp);
     pruefe(neu.includes('mampf-dojo-9.9.9'), 'Nach Klick: neue Version aktiv (' + neu + ')');
   }
   await page.request.post(BASIS + '__sw-version');
+  }
 
   console.log('\n11) Dark Mode & reduzierte Bewegung');
   await page.emulateMedia({ colorScheme: 'dark', reducedMotion: 'reduce' });

@@ -41,6 +41,13 @@ Parameter in `GEN` – nach Änderungen immer `node tests/run.js` laufen lassen 
 
 ## Testen
 - `node tests/run.js` – Daten-Checks, Generator 50×, Prognose, XP/Rückgängig, Speicher/Migration, Export/Import.
+  Härtetest: `WOCHEN=150 node tests/run.js`.
+- `tests/e2e.js` – Klick-Test in echtem Chromium bei 390 px (Playwright, nicht im Repo installiert):
+  `PLAYWRIGHT_PFAD=/pfad/node_modules/playwright SHOTS=/tmp/shots node tests/e2e.js`
+  (gegen live: `BASIS=https://solerooo.github.io/mampf-dojo/ OHNE_UPDATE=1 …`).
+- `tests/update-live.js` – echter Update-Weg gegen GitHub Pages (Phase `installieren` vor, `pruefen <version>` nach dem Push).
+- Hinweis: Der eingebaute Vorschau-Browser der Desktop-App kann keine Service Worker registrieren – SW/Offline mit
+  Playwright testen.
 - Lokaler Server: `node tools/devserver.js` → http://localhost:8777 (eigener Port!). Bei 390 px Breite durchklicken.
 - Test-Datum: `?datum=2026-10-20` an die URL hängen (simuliert einen anderen Tag).
 - Icons: SVGs mit `node tools/erzeuge-icon-svgs.js`, PNGs über http://localhost:8777/tools/icons.html.

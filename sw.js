@@ -2,7 +2,7 @@
    - index.html: network-first (neue Version sofort, offline aus dem Cache)
    - alles andere: cache-first
    - VERSION bei JEDER Änderung erhöhen (gleich wie APP_VERSION in index.html)! */
-const VERSION = '1.0.0';
+const VERSION = '1.0.1';
 const CACHE = 'mampf-dojo-' + VERSION;
 const DATEIEN = [
   './',
