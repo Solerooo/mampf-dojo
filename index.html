@@ -344,7 +344,7 @@ input[type=range] { width: 100%; accent-color: var(--pink); min-height: 44px; }
 @keyframes einblenden { from { opacity: 0; } to { opacity: 1; } }
 
 /* ---------- Overlays (Level-Up, Boss, Meilenstein, Laden) ---------- */
-.overlay { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; background: rgba(12, 6, 24, .9); padding: 20px; overflow: hidden; animation: einblenden .2s; }
+.overlay { position: fixed; inset: 0; z-index: 92; display: grid; place-items: center; background: rgba(12, 6, 24, .9); padding: 20px; overflow: hidden; animation: einblenden .2s; }
 .overlay-speed { position: absolute; inset: -60%; background: repeating-conic-gradient(from 0deg, rgba(255, 210, 63, .3) 0 4deg, transparent 4deg 12deg); animation: drehen 22s linear infinite; }
 .overlay-inhalt { position: relative; text-align: center; color: #fff; display: flex; flex-direction: column; align-items: center; gap: 10px; max-width: 380px; }
 .overlay-gross {
@@ -359,7 +359,7 @@ input[type=range] { width: 100%; accent-color: var(--pink); min-height: 44px; }
 @keyframes wackel { 0%, 100% { transform: rotate(-7deg); } 50% { transform: rotate(7deg); } }
 @keyframes pop { from { transform: rotate(-4deg) scale(.3); } to { transform: rotate(-4deg) scale(1); } }
 @keyframes drehen { to { transform: rotate(360deg); } }
-.konfetti { position: fixed; inset: 0; pointer-events: none; z-index: 70; overflow: hidden; }
+.konfetti { position: fixed; inset: 0; pointer-events: none; z-index: 93; overflow: hidden; }
 .konfetti i { position: absolute; top: -24px; width: 10px; height: 16px; border: 1.5px solid #000; border-radius: 2px; animation-name: fallen; animation-timing-function: linear; animation-fill-mode: forwards; }
 @keyframes fallen { to { transform: translate(var(--x), 112vh) rotate(var(--dreh)); } }
 .xp-float {

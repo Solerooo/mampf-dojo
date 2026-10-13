@@ -53,7 +53,7 @@ const xp = page => page.evaluate(() => berechneSpielstand(Z).xp);
   await page.goto(BASIS);
   await foto(page, '01-onboarding-start');
   await page.click('button:has-text("Los geht")');
-  await page.fill('input[data-ob="name"]', 'Marc');
+  await page.fill('input[data-ob="name"]', 'Testi');
   pruefe(await page.inputValue('input[data-ob="groesse"]') === '180', 'Größe 180 vorausgefüllt');
   pruefe(await page.inputValue('input[data-ob="startgewicht"]') === '62', 'Startgewicht 62 vorausgefüllt');
   pruefe(await page.inputValue('input[data-ob="zielgewicht"]') === '72', 'Zielgewicht 72 vorausgefüllt');
@@ -263,7 +263,7 @@ const xp = page => page.evaluate(() => berechneSpielstand(Z).xp);
   await page.setInputFiles('#import-datei', exportPfad);
   await warte(500);
   pruefe(await xp(page) === xpVorReset, 'Import stellt alles wieder her (XP gleich)');
-  pruefe(await page.evaluate(() => Z.profil.name) === 'Marc', 'Import: Profil wieder da');
+  pruefe(await page.evaluate(() => Z.profil.name) === 'Testi', 'Import: Profil wieder da');
 
   console.log('\n9) Service Worker & Offline');
   await page.goto(BASIS);
