@@ -2549,24 +2549,46 @@ function generiereWoche(z, optionen) {
     if (erg.strafe < besteStrafe) { besteStrafe = erg.strafe; bester = erg.plan; }
   }
   besteStrafe = poliere(bester, K, besteStrafe);
+  // Ab hier: jede Stufe wird mit den NORMALEN Gewichten verglichen – nur echte Verbesserungen gewinnen.
+  const normalWert = plan => {
+    const b = K.budgetBasis, e = K.budgetProEuro;
+    K.budgetBasis = 250; K.budgetProEuro = 250;
+    const wert = bewertePlan(plan, K);
+    K.budgetBasis = b; K.budgetProEuro = e;
+    return wert;
+  };
+  besteStrafe = normalWert(bester);
+  const nimmWennBesser = plan => { const wert = normalWert(plan); if (wert < besteStrafe) { besteStrafe = wert; bester = plan.slice(); } };
+  const offen = () => { normalWert(bester); return K.letzteRegeln > 0 || K.letzteKosten > K.budget; };
   // Reparatur: noch über Budget? → mit verschärfter Budgetstrafe vom besten Plan aus weitersuchen
-  for (let versuch = 0; versuch < 2; versuch++) {
-    bewertePlan(bester, K);
-    if (K.letzteKosten <= K.budget) break;
+  for (let versuch = 0; versuch < 2 && (normalWert(bester), K.letzteKosten > K.budget); versuch++) {
     K.budgetBasis = 3000; K.budgetProEuro = 1500;
     const erg = annealing(bester.slice(), K, rnd, N, 40, 0.3, 1);
-    bester = erg.plan;
-    besteStrafe = poliere(bester, K, erg.strafe);
+    poliere(erg.plan, K, erg.strafe);
+    K.budgetBasis = 250; K.budgetProEuro = 250;
+    nimmWennBesser(erg.plan);
+  }
+  // Sicherheitsnetz: bei verbliebenen Regelverstößen bis zu 3 weitere Neustarts
+  for (let extra = 0; extra < 3 && offen(); extra++) {
+    const erg = annealing(startPlan(K, rnd), K, rnd, N, GEN.tStart, GEN.tEnde);
+    poliere(erg.plan, K, erg.strafe);
+    nimmWennBesser(erg.plan);
+  }
+  // Letzte Stufe: Regeln gehen vor Komfort – ohne Premium-/Abwechslungs-Bonus reparieren
+  if (offen()) {
+    const verstoss = () => K.letzteRegeln + (K.letzteKosten > K.budget ? 1000 + (K.letzteKosten - K.budget) * 100 : 0);
+    normalWert(bester);
+    const vorher = verstoss();
+    const merk = { p: GEN.premiumStrafe, r: GEN.vielfaltRezept, k: GEN.vielfaltKueche, w: GEN.wiederholung };
+    GEN.premiumStrafe = 0; GEN.vielfaltRezept = 0; GEN.vielfaltKueche = 0; GEN.wiederholung = 0;
+    const erg = annealing(bester.slice(), K, rnd, N, 40, 0.3, 1);
+    poliere(erg.plan, K, erg.strafe);
+    GEN.premiumStrafe = merk.p; GEN.vielfaltRezept = merk.r; GEN.vielfaltKueche = merk.k; GEN.wiederholung = merk.w;
+    normalWert(erg.plan);
+    if (verstoss() < vorher) { bester = erg.plan; }
   }
   K.budgetBasis = 250; K.budgetProEuro = 250;
   besteStrafe = bewertePlan(bester, K);
-  // Sicherheitsnetz: bei verbliebenen Regelverstößen bis zu 3 weitere Neustarts, das Beste gewinnt
-  for (let extra = 0; extra < 3 && (K.letzteRegeln > 0 || K.letzteKosten > K.budget); extra++) {
-    const erg = annealing(startPlan(K, rnd), K, rnd, N, GEN.tStart, GEN.tEnde);
-    const st = poliere(erg.plan, K, erg.strafe);
-    if (st < besteStrafe) { bester = erg.plan; besteStrafe = st; }
-    besteStrafe = bewertePlan(bester, K);
-  }
   // Plan in ein speicherbares Wochen-Objekt umwandeln
   const tage = [];
   for (let d = 0; d < 7; d++) {
