@@ -244,10 +244,12 @@ input[type=range] { width: 100%; accent-color: var(--pink); min-height: 44px; }
 .mz-text b, .rk-text b { display: block; font-size: 16.5px; line-height: 1.2; overflow-wrap: anywhere; }
 .mz-meta { display: flex; flex-wrap: wrap; gap: 3px 10px; font-size: 13px; color: var(--muted); margin-top: 4px; font-weight: 700; }
 .mz-knoepfe { display: grid; grid-template-columns: 1.45fr 1fr; gap: 10px; margin-top: 8px; }
-.btn-essen.an { background: var(--gruen); }
+.btn-essen.an { background: var(--gruen); flex-direction: column; gap: 0; }
+.btn-essen.an small { font-size: 11px; }
+.tag-kopf + .knopf-reihe .btn { font-size: 15px; padding: 8px 10px; }
 .stempel {
-  position: absolute; right: 10px; top: 36px; font-family: var(--font-titel); font-weight: 900; font-size: 24px; color: var(--rot);
-  border: 4px solid var(--rot); border-radius: 10px; padding: 0 10px; transform: rotate(-14deg); opacity: .85; pointer-events: none;
+  position: absolute; left: 4px; top: 58px; font-family: var(--font-titel); font-weight: 900; font-size: 15px; color: var(--rot);
+  border: 3px solid var(--rot); border-radius: 8px; padding: 0 6px; transform: rotate(-14deg); opacity: .9; pointer-events: none;
   background: rgba(255, 255, 255, .7); animation: stempel .35s cubic-bezier(.2, 1.6, .4, 1);
 }
 @keyframes stempel { from { transform: rotate(-14deg) scale(2.4); opacity: 0; } to { transform: rotate(-14deg) scale(1); opacity: .85; } }
@@ -413,6 +415,7 @@ input[type=range] { width: 100%; accent-color: var(--pink); min-height: 44px; }
 .leg-prognose { border-top: 3px dashed var(--tuerkis); }
 .leg-ziel { border-top: 2.5px dashed var(--gruen); }
 .ww-text { min-height: 3em; }
+.gesperrt summary { min-height: 44px; display: flex; align-items: center; font-weight: 800; cursor: pointer; margin-top: 8px; }
 .gewicht-liste summary { min-height: 44px; display: flex; align-items: center; font-weight: 800; cursor: pointer; }
 .erfolge { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .erfolge li { border: 2.5px solid var(--ink); border-radius: 12px; padding: 8px; background: var(--panel-2); display: flex; flex-direction: column; gap: 2px; opacity: .6; }
@@ -1826,7 +1829,7 @@ function fmtBruch(x) {
 function fmtMenge(id, menge) {
   const z = ZUTAT[id];
   if (z.einheit === 'Stk') {
-    const m = Math.max(0.25, menge);
+    const m = z.stueckG < 70 ? Math.max(1, Math.round(menge)) : Math.max(0.25, menge);
     const name = z.stk ? (m > 1.01 ? z.stk[1] : z.stk[0]) : (z.kurz || z.name);
     return fmtBruch(m) + ' ' + name;
   }
@@ -1836,7 +1839,8 @@ function fmtMenge(id, menge) {
 }
 function fmtNurMenge(id, menge) {
   const z = ZUTAT[id];
-  if (z.einheit === 'Stk') return fmtBruch(menge) + ' Stk';
+  if (z.einheit === 'Stk') return (z.stueckG < 70 ? String(Math.max(1, Math.ceil(menge - 0.15))) : fmtBruch(Math.max(0.5, Math.round(menge * 2) / 2))) + ' Stk';
+  if (menge < 1) return 'eine Prise';
   if (menge >= 1000) return fmtZahl(menge / 1000, (menge % 1000) ? 2 : 0).replace(/,?0+$/, '') + (z.einheit === 'ml' ? ' l' : ' kg');
   return fmtZahl(Math.round(menge)) + ' ' + z.einheit;
 }
@@ -2203,7 +2207,7 @@ const GEN = {
   proteinMin: 0.9,     // mind. 90 %
   zielAufschlag: 1.005,
   kostenGewicht: 10,   // Strafpunkte pro € (günstiger = besser)
-  premiumStrafe: 400,  // pro fehlendem Premium-Gericht (Ziel 2–3/Woche)
+  premiumStrafe: 550,  // pro fehlendem Premium-Gericht (Ziel 2–3/Woche)
   tStart: 120, tEnde: 0.4, // Temperatur des Simulated Annealing
   budgetPuffer: 0.6,   // € Sicherheitsabstand zum Wochenbudget
   hartStart: 0.25, hartEnde: 4,
@@ -3161,7 +3165,9 @@ function toast(html, typ) {
   const el = document.createElement('div');
   el.className = 'toast ' + (typ || '');
   el.innerHTML = html;
-  $('#toast-root').appendChild(el);
+  const root = $('#toast-root');
+  while (root.children.length >= 3) root.firstChild.remove();
+  root.appendChild(el);
   setTimeout(() => el.classList.add('weg'), 2600);
   setTimeout(() => el.remove(), 3100);
 }
@@ -3317,11 +3323,11 @@ function mahlzeitKarte(w, wi, ti, si, A, nurLesen) {
     <button class="mz-haupt" data-a="rezept" data-rid="${r.id}" data-mild="${slot.mild ? 1 : 0}" ${ctx} aria-label="Rezept ${esc(r.name)} öffnen">
       <span class="mz-emoji" aria-hidden="true">${r.emoji}</span>
       <span class="mz-text"><b>${esc(r.name)}</b>
-        <span class="mz-meta"><span>🔥 ${fmtZahl(slot.kcal)} kcal</span><span>💪 ${fmtZahl(slot.protein)} g</span><span>⏱ ${inf.rest ? 5 : r.zeitMin} Min</span><span title="${AUFWAND_TEXT[inf.aufwand]}">${AUFWAND_ICON[inf.aufwand]}</span><span title="Abwasch">🧽 ${inf.abwasch}</span>${slot.skala !== 1 ? `<span title="Portionsgröße">⚖️ ${fmtZahl(slot.skala * 100)} %</span>` : ''}</span>
+        <span class="mz-meta"><span>🔥 ${fmtZahl(slot.kcal)} kcal</span><span>💪 ${fmtZahl(slot.protein)} g</span><span>⏱ ${inf.rest ? 5 : r.zeitMin} Min</span><span title="${AUFWAND_TEXT[inf.aufwand]}">${AUFWAND_ICON[inf.aufwand]}</span><span title="Abwasch">🧽 ${inf.abwasch}</span>${slot.skala !== 1 ? `<span title="Portionsgröße">⚖️ Portion ${fmtZahl(slot.skala * 100)} %</span>` : ''}</span>
       </span>
     </button>
     ${nurLesen ? '' : `<div class="mz-knoepfe">
-      <button class="btn btn-essen ${slot.gegessen ? 'an' : ''}" data-a="essen" ${ctx} aria-pressed="${slot.gegessen}">${slot.gegessen ? '✓ Gegessen <small>(rückgängig)</small>' : 'Gegessen!'}</button>
+      <button class="btn btn-essen ${slot.gegessen ? 'an' : ''}" data-a="essen" ${ctx} aria-pressed="${slot.gegessen}">${slot.gegessen ? '<span>✓ Gegessen</span><small>tippen = rückgängig</small>' : 'Gegessen!'}</button>
       <button class="btn btn-ghost" data-a="tauschen" ${ctx} ${slot.gegessen ? 'disabled' : ''}>🔄 Tauschen</button>
     </div>`}
     ${slot.gegessen ? '<div class="stempel" aria-hidden="true">MAMPF!</div>' : ''}
@@ -3451,7 +3457,7 @@ function renderEinkauf() {
   html += `<section class="panel einkauf-kopf">
     <h2 class="titel">🛒 Einkauf ab ${fmtTag(w.start)}</h2>
     <div class="stat-grid">
-      <div class="stat gelb"><b>${fmtEuro(kasse)}</b><span>ca. an der Kasse</span></div>
+      <div class="stat gelb"><b>${fmtEuro(kasse)}</b><span>ca. an der Kasse${e.vorrat.some(v => !e.vorratDa[v.id]) ? ' (inkl. Vorrat, der fehlt)' : ''}</span></div>
       <div class="stat"><b>${imWagen}/${kaufbar.length}</b><span>im Wagen</span></div>
     </div>
     <div class="ziel-zeile"><span>Plan-Kosten (Vorrat anteilig)</span><b>${fmtEuro(e.kostenPlan)} <small>/ ${fmtEuro(w.budget)}</small></b></div>
@@ -3930,7 +3936,9 @@ function renderProfil() {
     ${prognosePanel()}
     <section class="panel">
       <h3 class="titel-klein">🏆 Erfolge <small>(${freigeschaltet}/${ERFOLGE.length})</small></h3>
-      <ul class="erfolge">${ERFOLGE.map(e => { const an = !!Z.erfolge[e.id]; return `<li class="${an ? 'an' : ''}" title="${esc(e.text)}"><span class="erfolg-emoji">${an ? e.emoji : '🔒'}</span><b>${esc(e.name)}</b><small>${esc(e.text)}</small></li>`; }).join('')}</ul>
+      ${freigeschaltet ? `<ul class="erfolge">${ERFOLGE.filter(e => Z.erfolge[e.id]).map(e => `<li class="an" title="${esc(e.text)}"><span class="erfolg-emoji">${e.emoji}</span><b>${esc(e.name)}</b><small>${esc(e.text)}</small></li>`).join('')}</ul>` : '<p class="muted klein">Noch keine Erfolge – hak deine erste Mahlzeit ab!</p>'}
+      <details class="gesperrt" data-id="erfolge-gesperrt" ${UI.offen && UI.offen.has('erfolge-gesperrt') ? 'open' : ''}><summary>🔒 Noch gesperrt (${ERFOLGE.length - freigeschaltet})</summary>
+        <ul class="erfolge">${ERFOLGE.filter(e => !Z.erfolge[e.id]).map(e => `<li title="${esc(e.text)}"><span class="erfolg-emoji">🔒</span><b>${esc(e.name)}</b><small>${esc(e.text)}</small></li>`).join('')}</ul></details>
     </section>
     <h3 class="titel-klein einst-titel">⚙️ Einstellungen</h3>
     ${renderEinstellungen()}`;
