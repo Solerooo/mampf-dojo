@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "mampf-dojo",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["tools/devserver.js", "8777"],
+      "port": 8777
+    }
+  ]
+}
